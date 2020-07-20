@@ -117,17 +117,6 @@ GameView GvNew(char *pastPlays, Message messages[])
 	
 	
 	int turn = 0;
-	
-	char *step = strtok(pastPlays, " ");
-	while (step != NULL) {
-	
-	
-	
-	    step = strtok(NULL, 
-	}
-	
-	
-	
     /*for (int i = 0; pastPlays[i] != '\0'; i++) {
 	    if (pastPlays[i] == ' ') turn++;
     }
