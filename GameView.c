@@ -156,6 +156,11 @@ GameView GvNew(char *pastPlays, Message messages[])
 	return new;
 }
 
+
+
+
+
+
 void GvFree(GameView gv)
 {
     //free(gv->LG_view);
@@ -241,6 +246,16 @@ PlaceId GvGetVampireLocation(GameView gv)
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	return gv->vampire;
 }
+
+
+
+
+
+
+
+
+
+
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
