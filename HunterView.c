@@ -39,7 +39,7 @@ HunterView HvNew(char *pastPlays, Message messages[])
 		fprintf(stderr, "Couldn't allocate HunterView!\n");
 		exit(EXIT_FAILURE);
 	}
-    new->gv = GvNew(pastPlays, messages)
+    new->gv = GvNew(pastPlays, messages);
 	return new;
 }
 

@@ -28,6 +28,8 @@ typedef struct city {
 	PlaceId cityID;
 	int trap_num;
 } city;
+
+
 struct gameView {
 	// TODO: ADD FIELDS HERE
 
@@ -79,9 +81,10 @@ GameView GvNew(char *pastPlays, Message messages[])
 	    str[i] = pastPlays[i];
 	    //printf("%c", str[i]);
 	}
-	printf("string is %s\n", str);
-	char *out = strtok(str, " ");
-	printf("%s abcd\n", out);
+	str[i - 1] = '\0';
+	//printf("string is: %s\n", str);
+	//char *out = strtok(str, " ");
+	//printf("%s abcd\n", out);
 	//printf("before assertion!\n");
 	//strcpy(str, pastPlays);
 	//printf("%s", str);
@@ -136,8 +139,8 @@ GameView GvNew(char *pastPlays, Message messages[])
 	new->turn = 0;
 	//char str[] = "abc def ghi";
 	//char *step = strtok(pastPlays, " ");
-	
-	/*while (step != NULL) {
+	char *step = strtok(str, " ");
+	while (step != NULL) {
 	    new->turn++;	    
 		char place[2];
 		for(int i = 1; i <= 2; i++) place[i - 1] = step[i];
@@ -215,7 +218,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 
 	    step = strtok(NULL, " ");
 	}
-	new->round = new->turn / 5;*/
+	new->round = new->turn / 5;
 
     
 	return new;
