@@ -28,6 +28,8 @@ typedef struct city {
 	PlaceId cityID;
 	int trap_num;
 } city;
+
+
 struct gameView {
 	// TODO: ADD FIELDS HERE
 
