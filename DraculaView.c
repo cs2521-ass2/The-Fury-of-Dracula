@@ -137,7 +137,7 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
 	PlaceId current_place = DvGetPlayerLocation(dv, player);
     Round current_round = DvGetRound(dv);
 	return GvGetReachableByType(dv->gv, player, current_round,
-                        current_place, road, false, boat, numReturnedLocs);
+                        current_place, road, rail, boat, numReturnedLocs);
 }
 
 ////////////////////////////////////////////////////////////////////////
