@@ -101,24 +101,32 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	Player current_player = GvGetPlayer(dv->gv);
+	PlaceId current_place = DvGetPlayerLocation(dv, current_player);
+    Round current_round = DvGetRound(dv);
+	return GvGetReachable(dv->gv, current_player, current_round,
+                        current_place, numReturnedLocs);
 }
 
 PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
                              int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	Player current_player = GvGetPlayer(dv->gv);
+	PlaceId current_place = DvGetPlayerLocation(dv, current_player);
+    Round current_round = DvGetRound(dv);
+	return GvGetReachableByType(dv->gv, current_player, current_round,
+                        current_place, road, false, boat, numReturnedLocs);
 }
 
 PlaceId *DvWhereCanTheyGo(DraculaView dv, Player player,
                           int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	PlaceId current_place = DvGetPlayerLocation(dv, player);
+    Round current_round = DvGetRound(dv);
+	return GvGetReachable(dv->gv, player, current_round,
+                        current_place, numReturnedLocs);;
 }
 
 PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
@@ -126,8 +134,10 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
                                 int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	PlaceId current_place = DvGetPlayerLocation(dv, player);
+    Round current_round = DvGetRound(dv);
+	return GvGetReachableByType(dv->gv, player, current_round,
+                        current_place, road, false, boat, numReturnedLocs);
 }
 
 ////////////////////////////////////////////////////////////////////////
