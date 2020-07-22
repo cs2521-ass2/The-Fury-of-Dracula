@@ -54,7 +54,7 @@ struct gameView {
 	int playerPlace[5]; // PlaceId of the current Player
 	//Player currPlayer;
 	int turn;
-	int trail[6]; // The trail of Dracula
+	int trail[366]; // The trail of Dracula
 };
 
 
@@ -127,11 +127,15 @@ GameView GvNew(char *pastPlays, Message messages[])
 	for (i = 0; i < 4; i++) {
 	    new->inhospital[i] = 0;
 	}
-	
+
 	new->past_route = malloc(5 *sizeof(int *));
     for (i = 0; i < 5; i++) {
         new->past_route[i] = malloc(366 * sizeof(int));
+        for (int j = 0; j < 366; j++) {
+            new->past_route[i][j] = NOWHERE;
+        } 
     }	
+    
     
     //new->message = malloc(100 * sizeof(Message));
      // not sure
@@ -141,7 +145,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	
 	for(i = 0; i < 5; i++) new->playerPlace[i] = NOWHERE;
 	
-	for (i = 0; i < 6; i++) new->trail[i] = NOWHERE;
+	for (i = 0; i < 366; i++) new->trail[i] = NOWHERE;
 
 	new->turn = 0;
 	//char str[] = "abc def ghi";
@@ -150,11 +154,13 @@ GameView GvNew(char *pastPlays, Message messages[])
 	//printf("%s", step);
 	while (step != NULL) {
 	    //printf("%s\n", step);
+	    int is_DOUBLE_BACK_HIDE = 0;
 	    for (i = 0; i < 4; i++) {
 	        if (new->inhospital[i] == 1)
 	            new->player_hp[i] = GAME_START_HUNTER_LIFE_POINTS;
 	    }
-	    new->turn++;	    
+	    new->turn++;
+	    //printf("turn: %d\n", new->turn);	    
 		char place[3];
 		for(int i = 1; i <= 2; i++) {
 		    place[i - 1] = step[i];
@@ -182,6 +188,8 @@ GameView GvNew(char *pastPlays, Message messages[])
 		if (step[0] == 'G') {
 			new->playerPlace[PLAYER_LORD_GODALMING] = placeID;
 			playerIndex = PLAYER_LORD_GODALMING;
+			
+			
 		} else if (step[0] == 'S') {
 			new->playerPlace[PLAYER_DR_SEWARD] = placeID;
 			playerIndex = PLAYER_DR_SEWARD;
@@ -192,31 +200,49 @@ GameView GvNew(char *pastPlays, Message messages[])
 			new->playerPlace[PLAYER_MINA_HARKER] = placeID;
 			playerIndex = PLAYER_MINA_HARKER;
 		} else if (step[0] == 'D') {
-		    int index = 1;
+            //new->trail[new->round] = placeID; has D_B
+		    /*int index = 1;
 		    while (index < 6) {
 			    new->trail[index - 1] = new->trail[index];
 			    index++;
+		    }*/
+		    i = 0;
+		    while (new->trail[i] != NOWHERE) {
+		        i++;
 		    }
+		    new->trail[i] = placeID;
+		    i = 0;
+		    while (new->trail[i] != NOWHERE) {
+		        i++;
+		    } // i = trail size
 		    if (placeID >= DOUBLE_BACK_1  && placeID <= DOUBLE_BACK_5) {
-			    
+			    is_DOUBLE_BACK_HIDE = placeID;
 		        int trackBack = placeID % 103;
 		        
-	            placeID = new->trail[4 - trackBack];
-	           
+	            placeID = new->trail[i - 2 - trackBack];
 		        
 		    } else if (placeID == HIDE) {
-		        
-		        placeID = new->trail[4];
+		        is_DOUBLE_BACK_HIDE = placeID;
+		        placeID = new->trail[i - 2];
 		    }
 			new->playerPlace[PLAYER_DRACULA] = placeID;
-			
-		    new->trail[index - 1] = placeID;
-			
+		    new->trail[i - 1] = placeID;
 			playerIndex = PLAYER_DRACULA;
 			
 		    if (placeID == CASTLE_DRACULA) new->player_hp[playerIndex] += 10;
 		}
-
+        i = 0;
+        while (new->past_route[playerIndex][i] != NOWHERE) {
+            i++;
+        }
+        if (is_DOUBLE_BACK_HIDE != 0) {
+            
+            new->past_route[playerIndex][i] = is_DOUBLE_BACK_HIDE;
+        } else {
+            new->past_route[playerIndex][i] = placeID;
+        }
+		
+		
 		// If hunters
 		if (step[0] != 'D') {
 		
@@ -231,7 +257,6 @@ GameView GvNew(char *pastPlays, Message messages[])
 			    
 			
 			// Vampire
-			//printf("hospital: %d, palyerIndex: %d\n", new->inhospital[playerIndex], playerIndex);
 			if (new->inhospital[playerIndex] == 0 && step[4] == 'T') {
 			    trapEncountered(new, placeID, playerIndex);
 			} else if (new->inhospital[playerIndex] == 0 && step[4] == 'V') {
@@ -249,7 +274,6 @@ GameView GvNew(char *pastPlays, Message messages[])
 			    draculaEncounter(new, playerIndex);
 				// maybe reveal the Dracula's position??
 			}
-			//printf("%c\n", step[6]);
 			if (new->inhospital[playerIndex] == 0 && step[6] == 'D') {
 			    draculaEncounter(new, playerIndex);
 				// maybe reveal the Dracula's position??
@@ -307,8 +331,9 @@ GameView GvNew(char *pastPlays, Message messages[])
 
 	    step = strtok(NULL, " ");
 	}
+	//printf("fheuifeuwk: %d\n", new->turn);
 	new->round = new->turn / 5;
-
+    //printf("round in func: %d, turn: %d\n", new->round, new->turn);
     
 	return new;
 }
@@ -391,6 +416,7 @@ PlaceId GvGetVampireLocation(GameView gv)
 	return gv->city_with_vam;
 }
 
+
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
@@ -400,17 +426,17 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 	        j++;
 	    }
     }
-	PlaceId trap[j];
+
+	*numTraps = j;
+	PlaceId *traps = malloc(6 * sizeof(int));
 	j = 0;
 	for (int i = 0; i < 6;i++) {
 	    if (gv->trapLocations[i] != NOWHERE) {
-	        trap[j] = gv->trapLocations[i];
-	        
+	        traps[j] = gv->trapLocations[i];
+	        j++;
 	    }
-	    
 	}
-	*numTraps = j;
-	return trap;
+	return traps;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -420,27 +446,72 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
                           int *numReturnedMoves, bool *canFree)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedMoves = 0;
+	
 	*canFree = false;
-	return NULL;
+	int i = 0;
+	while (gv->past_route[player][i] != NOWHERE) {
+	    //printf("%d\n", gv->past_route[player][i]);
+	    i++;
+	}
+	*numReturnedMoves = i;
+	return gv->past_route[player];
 }
 
 PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
                         int *numReturnedMoves, bool *canFree)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedMoves = 0;
-	*canFree = false;
-	return NULL;
+	int i = 0;
+	PlaceId *array = malloc(numMoves * sizeof(PlaceId));
+	while (gv->past_route[player][i] != NOWHERE) {
+	    //printf("%d\n", gv->past_route[player][i]);
+	    i++;
+	}
+	i--;
+	//int tmp = numMoves;
+	int counter = 0;
+	if (numMoves <= i + 1) {
+	    while (counter < numMoves) {
+	        array[counter] = gv->past_route[player][i];
+	        i--;
+	        counter++;
+	    }
+	    *numReturnedMoves = numMoves;
+	    *canFree = true;
+	    printf("lastMoves: %d\n", array[0]);
+	} else {
+	    *numReturnedMoves = i;
+	    *canFree = false;
+	    
+	    //printf("in func %d\n", numReturnedLocs);
+	    array = GvGetMoveHistory(gv, player,numReturnedMoves, canFree);
+	    printf("lastMoves: %d\n", array[0]);
+	    return array;
+        
+    }
+	    
+	
+	return array;
 }
 
 PlaceId *GvGetLocationHistory(GameView gv, Player player,
                               int *numReturnedLocs, bool *canFree)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	*canFree = false;
-	return NULL;
+	if (player == PLAYER_DRACULA) {
+	    *canFree = false;
+	    //numReturnedLocs = 
+	    int i = 0; 
+	    while (gv->trail[i] != NOWHERE) {
+	        i++;
+        }
+	    *numReturnedLocs = i;
+	    return gv->trail;
+	} else {
+	    return GvGetMoveHistory(gv, player, numReturnedLocs, canFree);
+	}
+	
+	//return 0;
 }
 
 PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,

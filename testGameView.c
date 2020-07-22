@@ -58,7 +58,6 @@ int main(void)
 		assert(GvGetRound(gv) == 0);
 		assert(GvGetPlayer(gv) == PLAYER_DR_SEWARD);
 		assert(GvGetScore(gv) == GAME_START_SCORE);
-		printf("%d %d\n", GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING), STRASBOURG);
 		assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == STRASBOURG);
 		assert(GvGetPlayerLocation(gv, PLAYER_DR_SEWARD) == NOWHERE);
 
@@ -101,7 +100,6 @@ int main(void)
 		};
 		
 		GameView gv = GvNew(trail, messages);
-
 		assert(GvGetRound(gv) == 1);
 		assert(GvGetPlayer(gv) == PLAYER_LORD_GODALMING);
 		assert(GvGetScore(gv) == GAME_START_SCORE - SCORE_LOSS_DRACULA_TURN);
@@ -398,6 +396,7 @@ int main(void)
 			int numLocs = 0; bool canFree = false;
 			PlaceId *locs = GvGetLocationHistory(gv, PLAYER_DRACULA,
 			                                     &numLocs, &canFree);
+         
 			assert(numLocs == 6);
 			assert(locs[0] == STRASBOURG);
 			assert(locs[1] == CITY_UNKNOWN);
