@@ -368,7 +368,9 @@ int main(void)
 			int numMoves = 0; bool canFree = false;
 			PlaceId *moves = GvGetMoveHistory(gv, PLAYER_LORD_GODALMING,
 			                                  &numMoves, &canFree);
+			
 			assert(numMoves == 7);
+			
 			assert(moves[0] == LISBON);
 			assert(moves[1] == CADIZ);
 			assert(moves[2] == GRANADA);

@@ -131,7 +131,11 @@ GameView GvNew(char *pastPlays, Message messages[])
 	new->past_route = malloc(5 *sizeof(int *));
     for (i = 0; i < 5; i++) {
         new->past_route[i] = malloc(366 * sizeof(int));
+        for (int j = 0; j < 366; j++) {
+            new->past_route[i][j] = NOWHERE;
+        } 
     }	
+    
     
     //new->message = malloc(100 * sizeof(Message));
      // not sure
@@ -150,6 +154,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	//printf("%s", step);
 	while (step != NULL) {
 	    //printf("%s\n", step);
+	    int is_DOUBLE_BACK_HIDE = 0;
 	    for (i = 0; i < 4; i++) {
 	        if (new->inhospital[i] == 1)
 	            new->player_hp[i] = GAME_START_HUNTER_LIFE_POINTS;
@@ -182,6 +187,8 @@ GameView GvNew(char *pastPlays, Message messages[])
 		if (step[0] == 'G') {
 			new->playerPlace[PLAYER_LORD_GODALMING] = placeID;
 			playerIndex = PLAYER_LORD_GODALMING;
+			
+			
 		} else if (step[0] == 'S') {
 			new->playerPlace[PLAYER_DR_SEWARD] = placeID;
 			playerIndex = PLAYER_DR_SEWARD;
@@ -198,14 +205,14 @@ GameView GvNew(char *pastPlays, Message messages[])
 			    index++;
 		    }
 		    if (placeID >= DOUBLE_BACK_1  && placeID <= DOUBLE_BACK_5) {
-			    
+			    is_DOUBLE_BACK_HIDE = placeID;
 		        int trackBack = placeID % 103;
 		        
 	            placeID = new->trail[4 - trackBack];
-	           
+	            
 		        
 		    } else if (placeID == HIDE) {
-		        
+		        is_DOUBLE_BACK_HIDE = placeID;
 		        placeID = new->trail[4];
 		    }
 			new->playerPlace[PLAYER_DRACULA] = placeID;
@@ -216,7 +223,19 @@ GameView GvNew(char *pastPlays, Message messages[])
 			
 		    if (placeID == CASTLE_DRACULA) new->player_hp[playerIndex] += 10;
 		}
-
+        i = 0;
+        while (new->past_route[playerIndex][i] != NOWHERE) {
+            i++;
+        }
+        if (is_DOUBLE_BACK_HIDE != 0) {
+            
+            new->past_route[playerIndex][i] = is_DOUBLE_BACK_HIDE;
+        } else {
+            new->past_route[playerIndex][i] = placeID;
+        }
+		
+		//printf("plaryerIndex %d placeID %d\n", playerIndex, new->past_route[playerIndex][new->round]);
+		
 		// If hunters
 		if (step[0] != 'D') {
 		
@@ -421,9 +440,15 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
                           int *numReturnedMoves, bool *canFree)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedMoves = 0;
+	
 	*canFree = false;
-	return NULL;
+	int i = 0;
+	while (gv->past_route[player][i] != NOWHERE) {
+	    //printf("%d\n", gv->past_route[player][i]);
+	    i++;
+	}
+	*numReturnedMoves = i;
+	return gv->past_route[player];
 }
 
 PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
