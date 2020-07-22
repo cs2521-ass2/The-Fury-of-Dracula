@@ -114,6 +114,7 @@ GameView GvNew(char *pastPlays, Message messages[])
     }	
     
     
+
      // not sure
     for (i = 0; i < new->round; i++) {
         new->message[i] = malloc(1024 * sizeof(char));
@@ -126,6 +127,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	new->turn = 0;
 	char *step = strtok(str, " ");
 	while (step != NULL) {
+
 	    int is_DOUBLE_BACK_HIDE = 0;
 	    for (i = 0; i < 4; i++) {
 	        if (new->inhospital[i] == 1)
@@ -177,12 +179,13 @@ GameView GvNew(char *pastPlays, Message messages[])
 		    if (placeID >= DOUBLE_BACK_1  && placeID <= DOUBLE_BACK_5) {
 			    is_DOUBLE_BACK_HIDE = placeID;
 		        int trackBack = placeID % 103;
-		        
+
 	            placeID = new->trail[i - 2 - trackBack];
 		        
 		    } else if (placeID == HIDE) {
 		        is_DOUBLE_BACK_HIDE = placeID;
 		        placeID = new->trail[i - 2];
+
 		    }
 			new->playerPlace[PLAYER_DRACULA] = placeID;
 		    new->trail[i - 1] = placeID;
@@ -200,7 +203,8 @@ GameView GvNew(char *pastPlays, Message messages[])
         } else {
             new->past_route[playerIndex][i] = placeID;
         }
-		
+
+
 		
 		// If hunters
 		if (step[0] != 'D') {

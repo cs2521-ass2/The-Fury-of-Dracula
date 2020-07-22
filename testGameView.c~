@@ -278,6 +278,7 @@ int main(void)
 		PlaceId *traps = GvGetTrapLocations(gv, &numTraps);
 		assert(numTraps == 2);
 		sortPlaces(traps, numTraps);
+		printf("%d, %d\n", traps[0], traps[1]);
 		assert(traps[0] == GALATZ && traps[1] == KLAUSENBURG);
 		free(traps);
 		
@@ -396,8 +397,7 @@ int main(void)
 			int numLocs = 0; bool canFree = false;
 			PlaceId *locs = GvGetLocationHistory(gv, PLAYER_DRACULA,
 			                                     &numLocs, &canFree);
-            PlaceId *lastMoves = GvGetLastMoves(gv, PLAYER_DRACULA, 6, &numLocs, &canFree);
-            printf("lastMoves: %d\n", lastMoves[0]);
+         
 			assert(numLocs == 6);
 			assert(locs[0] == STRASBOURG);
 			assert(locs[1] == CITY_UNKNOWN);

@@ -10,11 +10,11 @@
 #include "testUtils.h"
 
 static int placeIdCmp(const void *ptr1, const void *ptr2) {
-	PlaceId p1 = *(PlaceId *)ptr1;
-	PlaceId p2 = *(PlaceId *)ptr2;
-	return p1 - p2;
+    PlaceId p1 = *(PlaceId *)ptr1;
+    PlaceId p2 = *(PlaceId *)ptr2;
+    return p1 - p2;
 }
 
 void sortPlaces(PlaceId *places, int numPlaces) {
-	qsort(places, (size_t)numPlaces, sizeof(PlaceId), placeIdCmp);
+    qsort(places, (size_t)numPlaces, sizeof(PlaceId), placeIdCmp);
 }

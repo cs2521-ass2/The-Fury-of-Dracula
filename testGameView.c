@@ -278,6 +278,7 @@ int main(void)
 		PlaceId *traps = GvGetTrapLocations(gv, &numTraps);
 		assert(numTraps == 2);
 		sortPlaces(traps, numTraps);
+		printf("%d, %d\n", traps[0], traps[1]);
 		assert(traps[0] == GALATZ && traps[1] == KLAUSENBURG);
 		free(traps);
 		
