@@ -127,7 +127,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	for (i = 0; i < 4; i++) {
 	    new->inhospital[i] = 0;
 	}
-	
+
 	new->past_route = malloc(5 *sizeof(int *));
     for (i = 0; i < 5; i++) {
         new->past_route[i] = malloc(366 * sizeof(int));
@@ -391,6 +391,7 @@ PlaceId GvGetVampireLocation(GameView gv)
 	return gv->city_with_vam;
 }
 
+
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
@@ -400,17 +401,16 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 	        j++;
 	    }
     }
-	PlaceId trap[j];
+	*numTraps = j;
+	PlaceId *traps = malloc(6 * sizeof(int));
 	j = 0;
 	for (int i = 0; i < 6;i++) {
 	    if (gv->trapLocations[i] != NOWHERE) {
-	        trap[j] = gv->trapLocations[i];
-	        
+	        traps[j] = gv->trapLocations[i];
+	        j++;
 	    }
-	    
 	}
-	*numTraps = j;
-	return trap;
+	return traps;
 }
 
 ////////////////////////////////////////////////////////////////////////
