@@ -278,7 +278,6 @@ int main(void)
 		PlaceId *traps = GvGetTrapLocations(gv, &numTraps);
 		assert(numTraps == 2);
 		sortPlaces(traps, numTraps);
-		printf("%d, %d\n", traps[0], traps[1]);
 		assert(traps[0] == GALATZ && traps[1] == KLAUSENBURG);
 		free(traps);
 		
@@ -407,6 +406,33 @@ int main(void)
 			assert(locs[5] == CITY_UNKNOWN);
 			if (canFree) free(locs);
 		}
+		
+		
+		
+		
+		
+		
+		
+		
+		/*{
+		    int numLocs = 0; bool canFree = false;
+			PlaceId *lastLocs = GvGetLastLocations(gv, PLAYER_LORD_GODALMING, 7, 
+			                                  &numLocs, &canFree);
+		    printf("numLocs: %d\n", numLocs);
+			assert(numLocs == 7);
+			assert(lastLocs[0] == MADRID);
+			assert(lastLocs[1] == SANTANDER);
+			assert(lastLocs[2] == SARAGOSSA);
+			assert(lastLocs[3] == ALICANTE);
+			assert(lastLocs[4] == GRANADA);
+			assert(lastLocs[5] == CADIZ);
+			assert(lastLocs[6] == LISBON);
+			printf("canFree: %d\n", canFree);
+			if (canFree) free(lastLocs);
+		
+		    printf("ncuieaKFjwhefiwakewea\n");
+		
+		}*/
 		
 		GvFree(gv);
 		printf("Test passed!\n");
