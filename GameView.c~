@@ -44,7 +44,7 @@ struct gameView {
 
 	Round round; // which round it is
 	int city_with_vam; // the city ID with unmatured vampire, if not, set value = -1
-	//City cities_with_trap[TRAIL_SIZE]; 
+	//City cities_with_trap[TRAIL_SIZE];
 	int *trapLocations; // int array of trap locations
 	//array of cities with may include traps;if empty, set value = -1
 	int score; // score of game
@@ -301,6 +301,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 				new->city_with_vam = NOWHERE;
 				new->score -= 13;
 			}
+
 			new->score--;
 		}
 
@@ -514,4 +515,5 @@ void draculaEncounter(GameView new, int playerIndex)
 		//printf("function: %d\n", new->score);
 	}
 }
+
 

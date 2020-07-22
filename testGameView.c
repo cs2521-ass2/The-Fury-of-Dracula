@@ -58,6 +58,7 @@ int main(void)
 		assert(GvGetRound(gv) == 0);
 		assert(GvGetPlayer(gv) == PLAYER_DR_SEWARD);
 		assert(GvGetScore(gv) == GAME_START_SCORE);
+		printf("%d %d\n", GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING), STRASBOURG);
 		assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == STRASBOURG);
 		assert(GvGetPlayerLocation(gv, PLAYER_DR_SEWARD) == NOWHERE);
 
