@@ -101,8 +101,8 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 	last_locations = GvGetLastLocations(hv->gv, PLAYER_DRACULA, 6,
                             &numReturnedLocs, false);
     for (int i = numReturnedLocs - 1; i >= 0; i--) {
-        if (last_locations[i] != CITY_UNKNOWN && 
-            last_locations[i] != SEA_UNKNOWN) {
+        if (last_locations[i] >= MIN_REAL_PLACE && 
+            last_locations[i] <= MAX_REAL_PLACE) {
             *round = current_round - numReturnedLocs + i;
             return last_locations[i];    
         }
