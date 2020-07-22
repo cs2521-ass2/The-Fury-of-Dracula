@@ -230,6 +230,9 @@ int main(void)
 		Message messages[21] = {};
 		GameView gv = GvNew(trail, messages);
 		
+		printf("round: %d, score: %d, corrScore: %d\n", GvGetRound(gv), GvGetScore(gv), GAME_START_SCORE
+		                         - 4 * SCORE_LOSS_DRACULA_TURN
+		                         - SCORE_LOSS_HUNTER_HOSPITAL);
 		assert(GvGetScore(gv) == GAME_START_SCORE
 		                         - 4 * SCORE_LOSS_DRACULA_TURN
 		                         - SCORE_LOSS_HUNTER_HOSPITAL);
