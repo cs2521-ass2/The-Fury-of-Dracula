@@ -19,6 +19,7 @@
 #include "HunterView.h"
 #include "Map.h"
 #include "Places.h"
+#include "Queue.h"
 // add your own #includes here
 
 // TODO: ADD YOUR OWN STRUCTS HERE
@@ -113,9 +114,54 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    //PlaceId current_place = HvGetPlayerLocation(hv, hunter);
+    PlaceId source = HvGetPlayerLocation(hv, player);
+    int Max = PlaceId placeNameToId(Zurich);
+    Round tmp_round = HvGetRound(hv);
+    int *tmp_returnedLocs = 0;
     
+    //make new queue for places to visit
+    struct Queue* ToVisit = NewQueue(Max);
+    //initialise 2D array of visited paths.
+    //set all to -3 since it is not an existing PlaceId.
+    PlaceId PathsVisited[Max][Max]; 
+    for (i=0;i <=Max; i++){
+	    for(j=0; j<=Max; j++){
+		    PathsVisited[i][j] = -3;
+        }
+    }  
+    PathsVisited[source][source] = source;
+    enqueue(ToVisit, source);
+    //while there is still places to visit, 
+    //repeatedly call gvgetreachable to enqueue. 
+    //if the destination is found, return its path.
+    while (!isEmpty(ToVisit)) {
+        PlaceId tmp_loc = dequeue(ToVisit);
+        if (tmp_loc == dest) {
+            for(int i=0;i<=Max && PathsVisited[tmp_loc][i] != -3; i++);
+	        *pathLength = i;
+	        return &PathsVisited[tmp_loc];
+	    }
+	    PlaceId *to_enqueue = gvgetreachable(hv, player, tmp_round, 
+	                          tmp_loc, tmp_returnedLocs);
+	    int i=0;
+	    while (to_enqueue[i] <= MAX_REAL_PLACE && 
+	                            to_enqueue[i] >= MIN_REAL_PLACE) {
+	        int QueueCheck = isNotInQueue(ToVisit, to_enqueue[i])
+	        if (QueueCheck == 1) {
+	            enqueue(ToVisit, to_enqueue[i]);
+	            i++;
+	        } else {
+	            i++;
+	        }
+	    }
+        //copy and overlap the paths taken to get to a certain place from source.
+	    for (int j=0; PathsVisited[tmp_loc][j] != -1; j++) {
+            PathsVisited[tmp_loc][j] = PathsVisited[p][j];
+            PathsVisited[p][j+1]=p;
+        }
+        tmp_round += 1;
+    }
+	      
     return NULL;
 }
 
