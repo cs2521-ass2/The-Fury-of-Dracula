@@ -520,10 +520,10 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 	
 	if (player == PLAYER_DRACULA) {
 	    
-	}
+	}*/
 	
 	*numReturnedLocs = 0;
-	return NULL;*/
+	return NULL;
 }
 
 PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,

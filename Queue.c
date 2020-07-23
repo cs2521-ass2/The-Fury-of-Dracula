@@ -6,20 +6,20 @@
 ////////////////////////////
 
 Struct Queue {
-	int front;      //front of queue
-	int rear;       //back of queue
-	int size;      //the number of elements
-	int capacity;   //maximum number of elements
-	PlaceId *array; //pointer to array 
+    int front;      //front of queue
+    int rear;       //back of queue
+    int size;      //the number of elements
+    int capacity;   //maximum number of elements
+    PlaceId *array; //pointer to array 
 };
 //make new queue
 struct Queue* NewQueue(int capacity) {
-	struct Queue* ToVisit = malloc(sizeof(struct Queue));
-	ToVisit->capacity = capacity;
-	ToVisit->front = ToVisit->size = 0;
-	ToVisit->rear = capacity - 1;
-	ToVisit->array = malloc(ToVisit->capacity * sizeof(PlaceId));
-	Return ToVisit; 
+    struct Queue* ToVisit = malloc(sizeof(struct Queue));
+    ToVisit->capacity = capacity;
+    ToVisit->front = ToVisit->size = 0;
+    ToVisit->rear = capacity - 1;
+    ToVisit->array = malloc(ToVisit->capacity * sizeof(PlaceId));
+    Return ToVisit; 
 }
 
 // Queue is full when size becomes
@@ -59,14 +59,14 @@ int dequeue(struct Queue* queue)
 // Check if place is already in to-visit queue.
 int isNotInQueue (struct Queue* queue, PlaceId p)
 {
-	int i = 0;
-	while (i <= queue->size) {
-		if (queue->array[i] = p) {
-			return -1;
-		}
-	}
-	return 1;
+    int i = 0;
+    while (i <= queue->size) {
+        if (queue->array[i] = p) {
+            return -1;
+        }
+    }
+    return 1;
 }
-	
+    
 
 
