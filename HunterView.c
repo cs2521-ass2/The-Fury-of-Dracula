@@ -19,7 +19,6 @@
 #include "HunterView.h"
 #include "Map.h"
 #include "Places.h"
-#include "Queue.h"
 // add your own #includes here
 
 // TODO: ADD YOUR OWN STRUCTS HERE
@@ -116,55 +115,9 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
-    PlaceId source = HvGetPlayerLocation(hv, hunter);
-    int Max = MAX_REAL_PLACE;
-    Round tmp_round = HvGetRound(hv);
-    int *tmp_returnedLocs = 0;
-    
-    //make new queue for places to visit
-    struct Queue* ToVisit = NewQueue(Max);
-    //initialise 2D array of visited paths.
-    //set all to -3 since it is not an existing PlaceId.
-    PlaceId PathsVisited[Max][Max]; 
-    for (int i=0;i <=Max; i++){
-        for(int j=0; j<=Max; j++){
-            PathsVisited[i][j] = -3;
-        }
-    }  
-    PathsVisited[source][source] = source;
-    enqueue(ToVisit, source);
-    //while there is still places to visit, 
-    //repeatedly call gvgetreachable to enqueue. 
-    //if the destination is found, return its path.
-    while (!isEmpty(ToVisit)) {
-        PlaceId tmp_loc = dequeue(ToVisit);
-        int i;
-        if (tmp_loc == dest) {
-            for (i = 0; i <= Max && PathsVisited[tmp_loc][i] != -3; i++);
-            *pathLength = i;
-            return &PathsVisited[tmp_loc];
-        }
-        PlaceId *to_enqueue = gvgetreachable(hv, player, tmp_round, 
-                              tmp_loc, tmp_returnedLocs);
-        i = 0;
-        while (to_enqueue[i] <= MAX_REAL_PLACE && 
-                                to_enqueue[i] >= MIN_REAL_PLACE) {
-            int QueueCheck = isNotInQueue(ToVisit, to_enqueue[i])
-            if (QueueCheck == 1) {
-                enqueue(ToVisit, to_enqueue[i]);
-                i++;
-            } else {
-                i++;
-            }
-        }
-        //copy and overlap the paths taken to get to a certain place from source.
-        for (int j=0; PathsVisited[tmp_loc][j] != -1; j++) {
-            PathsVisited[tmp_loc][j] = PathsVisited[p][j];
-            PathsVisited[p][j+1]=p;
-        }
-        tmp_round += 1;
-    }
-    return NULL;
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	*pathLength = 0;
+	return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -172,66 +125,34 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 
 PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 {
-    Player curr_player = HvGetPlayer(hv);
-    return HvWhereCanTheyGo(hv,curr_player, numReturnedLocs);
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	*numReturnedLocs = 0;
+	return NULL;
 }
 
 PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
                              bool boat, int *numReturnedLocs)
 {
-    Player curr_player = HvGetPlayer(hv);
-    return HvWhereCanTheyGoByType(hv, curr_player, road, rail, boat, numReturnedLocs);
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	*numReturnedLocs = 0;
+	return NULL;
 }
 
 PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
                           int *numReturnedLocs)
 {
-    PlaceId curr_loc = GvGetPlayerLocation(hv->gv, player);
-    Round curr_round = HvGetRound(hv);
-    
-    if (curr_round < 1 || curr_loc == NOWHERE) {    
-        *numReturnedLocs = 0;
-        return NULL;
-    }
-    
-    if (player == PLAYER_DRACULA) {
-        if (GvGetPlayerLocation (hv->gv, player) == CITY_UNKNOWN ||
-            GvGetPlayerLocation (hv->gv, player) == SEA_UNKNOWN) {
-            *numReturnedLocs = 0;
-            return NULL;
-        } else {
-            curr_round += 1;        
-        }
-    }   
-        
-    PlaceId *place = GvGetReachable(hv->gv, player, curr_round, curr_loc, numReturnedLocs);
-    return place;
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	*numReturnedLocs = 0;
+	return NULL;
 }
 
 PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
-    PlaceId curr_loc = GvGetPlayerLocation(hv->gv, player);
-    Round curr_round = HvGetRound(hv);
-    
-    if (curr_round < 1 || curr_loc == NOWHERE) {    
-        *numReturnedLocs = 0;
-        return NULL;
-    }
-    if (player == PLAYER_DRACULA) {
-        if (GvGetPlayerLocation (hv->gv, player) == CITY_UNKNOWN ||
-            GvGetPlayerLocation (hv->gv, player) == SEA_UNKNOWN) {
-            *numReturnedLocs = 0;
-            return NULL;
-        } else {
-            curr_round += 1;
-        }       
-    }        
-    
-    PlaceId *place = GvGetReachableByType(hv->gv, player, curr_round, 
-                    road, rail, boat, curr_loc, numReturnedLocs);
-    return place;
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	*numReturnedLocs = 0;
+	return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////
