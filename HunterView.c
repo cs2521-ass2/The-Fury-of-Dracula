@@ -98,17 +98,20 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
     int numReturnedLocs = 0;
     Round current_round = HvGetRound(hv);
     bool canFree;
-    PlaceId *last_locations = GvGetLastMoves(hv->gv, PLAYER_DRACULA, 6,
+    PlaceId *last_moves = GvGetLastMoves(hv->gv, PLAYER_DRACULA, 6,
                             &numReturnedLocs, &canFree);
     for (int i = numReturnedLocs - 1; i >= 0; i--) {
-        if (last_locations[i] >= MIN_REAL_PLACE && 
-            last_locations[i] <= MAX_REAL_PLACE) {
+        if (last_moves[i] >= MIN_REAL_PLACE && 
+            last_moves[i] <= MAX_REAL_PLACE) {
             *round = current_round - numReturnedLocs + i;
-            return last_locations[i];    
+            PlaceId last_location = last_moves[i];
+            if (canFree)
+                free(last_moves);
+            return last_location;    
         }
     }
     if (canFree)
-        free(last_locations);
+        free(last_moves);
     return NOWHERE;
 }
 
