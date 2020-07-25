@@ -96,27 +96,31 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 {
     // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     int numReturnedLocs = 0;
-    PlaceId *last_locations;
     Round current_round = HvGetRound(hv);
-    last_locations = GvGetLastLocations(hv->gv, PLAYER_DRACULA, 6,
-                            &numReturnedLocs, false);
+    bool canFree;
+    PlaceId *last_moves = GvGetLastMoves(hv->gv, PLAYER_DRACULA, 6,
+                            &numReturnedLocs, &canFree);
     for (int i = numReturnedLocs - 1; i >= 0; i--) {
-        if (last_locations[i] >= MIN_REAL_PLACE && 
-            last_locations[i] <= MAX_REAL_PLACE) {
+        if (last_moves[i] >= MIN_REAL_PLACE && 
+            last_moves[i] <= MAX_REAL_PLACE) {
             *round = current_round - numReturnedLocs + i;
-            return last_locations[i];    
+            PlaceId last_location = last_moves[i];
+            if (canFree)
+                free(last_moves);
+            return last_location;    
         }
     }
+    if (canFree)
+        free(last_moves);
     return NOWHERE;
 }
 
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    //PlaceId current_place = HvGetPlayerLocation(hv, hunter);
-    
-    return NULL;
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	*pathLength = 0;
+	return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -124,37 +128,38 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 
 PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    *numReturnedLocs = 0;
-    return NULL;
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	*numReturnedLocs = 0;
+	return NULL;
 }
 
 PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
                              bool boat, int *numReturnedLocs)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    *numReturnedLocs = 0;
-    return NULL;
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	*numReturnedLocs = 0;
+	return NULL;
 }
 
 PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
                           int *numReturnedLocs)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    *numReturnedLocs = 0;
-    return NULL;
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	*numReturnedLocs = 0;
+	return NULL;
 }
 
 PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    *numReturnedLocs = 0;
-    return NULL;
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	*numReturnedLocs = 0;
+	return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
 // TODO
+
