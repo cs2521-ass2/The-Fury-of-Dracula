@@ -129,7 +129,9 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
     //set all to -3 since it is not an existing PlaceId.
    // PlaceId PathsVisited[MAX_REAL_PLACE][MAX_REAL_PLACE];    
     
-    PlaceId **PathsVisited = malloc(MAX_REAL_PLACE * MAX_REAL_PLACE * sizeof(PlaceId)); 
+    PlaceId **PathsVisited = malloc((MAX_REAL_PLACE + 1) * sizeof(PlaceId *)); 
+    for (int i = 0; i <= MAX_REAL_PLACE; i++)
+        PathsVisited[i] = malloc((MAX_REAL_PLACE + 1) * sizeof(PlaceId));
     for (int i=0;i <=MAX_REAL_PLACE; i++){
 	    for(int j=0; j<=MAX_REAL_PLACE; j++){
 		    PathsVisited[i][j] = NOWHERE;
