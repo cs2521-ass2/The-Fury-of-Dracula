@@ -75,13 +75,16 @@ int main(void)
         HunterView hv = HvNew(trail, messages);
 
         assert(HvGetRound(hv) == 0);
-        assert(HvGetPlayer(hv) == PLAYER_DRACULA);
+        assert(HvGetPlayer(hv) == PLAYER_MINA_HARKER);
         assert(HvGetScore(hv) == GAME_START_SCORE);
         assert(HvGetPlayerLocation(hv, PLAYER_LORD_GODALMING) == STRASBOURG);
         assert(HvGetPlayerLocation(hv, PLAYER_DR_SEWARD) == ATLANTIC_OCEAN);
         assert(HvGetPlayerLocation(hv, PLAYER_VAN_HELSING) == ZURICH);
         assert(HvGetPlayerLocation(hv, PLAYER_MINA_HARKER) == NOWHERE);
         assert(HvGetPlayerLocation(hv, PLAYER_DRACULA) == NOWHERE);
+        
+        HvFree(hv);
+        printf("Test passed!\n");
     }
     
     {///////////////////////////////////////////////////////////////////
@@ -225,7 +228,7 @@ int main(void)
             "GSZ.... SGE.... HGE.... MGE.... DC?T... "
             "GSZ.... SGE.... HGE....";
         
-        Message messages[15] = {};
+        Message messages[18] = {};
         HunterView hv = HvNew(trail, messages);
         
         assert(HvGetPlayerLocation(hv, PLAYER_DRACULA) == GALATZ);
@@ -463,3 +466,4 @@ int main(void)
     
     return EXIT_SUCCESS;
 }
+
