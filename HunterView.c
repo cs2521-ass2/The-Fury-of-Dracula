@@ -124,66 +124,34 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 
 PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 {
-    curr_player = HvGetPlayer(hv);
-    return HvWhereCanTheyGo(hv,curr_player, numReturnedLocs);
+    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+    *numReturnedLocs = 0;
+    return NULL;
 }
 
 PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
                              bool boat, int *numReturnedLocs)
 {
-    curr_player = HvGetPlayer(hv);
-    return HvWhereCanTheyGoByType(hv, curr_player, road, rail, boat, numReturnedLocs);
+    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+    *numReturnedLocs = 0;
+    return NULL;
 }
 
 PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
                           int *numReturnedLocs)
 {
-    PlaceId curr_loc = GvGetPlayerLocation(hv->gv, player);
-    Round curr_round = HvGetRound(hv);
-    
-    if (curr_round < 1 || curr_loc = NOWHERE) {    
-        *numReturnedLocs = 0;
-        return NULL;
-    }
-    
-    if (player == PLAYER_DRACULA) {
-        if (GvGetPlayerLocation (hv->gv, player) == CITY_UNKNOWN ||
-            GvGetPlayerLocation (hv->gv, player) == SEA_UNKNOWN) {
-            *numReturnedLocs = 0;
-            return NULL;
-        } else {
-            curr_round += 1;        
-        }
-    }   
-        
-    PlaceId *place = GvGetReachable(hv->gv, player, curr_round, curr_loc, numReturnedLocs);
-    return place;
+    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+    *numReturnedLocs = 0;
+    return NULL;
 }
 
 PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
-    PlaceId curr_loc = GvGetPlayerLocation(hv->gv, player);
-    Round curr_round = HvGetRound(hv);
-    
-    if (curr_round < 1 || curr_loc = NOWHERE) {    
-        *numReturnedLocs = 0;
-        return NULL;
-    }
-    if (player == PLAYER_DRACULA) {
-        if (GvGetPlayerLocation (hv->gv, player) == CITY_UNKNOWN ||
-            GvGetPlayerLocation (hv->gv, player) == SEA_UNKNOWN) {
-            *numReturnedLocs = 0;
-            return NULL;
-        } else {
-            curr_round += 1;
-        }       
-    }        
-    
-    PlaceId *place = GvGetReachableByType(hv->gv, player, curr_round, 
-                    road, rail, boat, curr_loc, numReturnedLocs);
-    return place;
+    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+    *numReturnedLocs = 0;
+    return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////

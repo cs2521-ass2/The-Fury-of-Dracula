@@ -18,6 +18,7 @@
 #include "GameView.h"
 #include "Map.h"
 #include "Places.h"
+#include "testUtils.h"
 // add your own #includes here
 
 // TODO: ADD YOUR OWN STRUCTS HERE
@@ -29,9 +30,24 @@ typedef struct city {
 	int trap_num;
 } city;*/
 
-static void trapEncountered(GameView new, int placeID, int playerIndex);
-void draculaEncounter(GameView new, int playerIndex);
+typedef int Item;
+typedef struct QueueRep *Queue;
 
+static void trapEncountered(GameView new, int placeID, int playerIndex);
+static void draculaEncounter(GameView new, int playerIndex);
+//static void hunterReachableRecursive(ConnList head, PlaceId *hunterReachable, Map new, int railLength, int j);
+static ConnList createNode (Item item);
+Queue createQueue (void);
+void dropQueue (Queue q);
+void enterQueue (Queue q, Item it);
+Item leaveQueue (Queue q);
+
+
+struct QueueRep {
+	ConnList head;
+	ConnList tail;
+	int size;
+};
 
 struct gameView {
 	// TODO: ADD FIELDS HERE
@@ -135,7 +151,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	    }
 	    new->turn++;    
 		char place[3];
-		for(int i = 1; i <= 2; i++) {
+		for(i = 1; i <= 2; i++) {
 		    place[i - 1] = step[i];
 	    }
 	    
@@ -295,12 +311,12 @@ void GvFree(GameView gv)
     int i;
     
     
-    free(gv->past_route);
     
     
     for (i = 0; i < 5; i++) {
         free(gv->past_route[i]);
     }
+    free(gv->past_route);
     
     free(gv->trapLocations);
 	
@@ -514,16 +530,114 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                         PlaceId from, int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	/*Map new = MapNew();
-	ConnList head = MapGetConnections(m, currPlace);
+Map new = MapNew();
+	ConnList head = MapGetConnections(new, from);
+	int railLength = (round + player) % 4;
 	
+	PlaceId *reachable = malloc(sizeof(PlaceId) * 1024);
+	int i;
+	int counter = 0;
 	
-	if (player == PLAYER_DRACULA) {
-	    
-	}*/
+	for (i = 0; i < 1024; i++) reachable[i] = NOWHERE;
 	
-	*numReturnedLocs = 0;
-	return NULL;
+    
+ 
+
+	if (player != PLAYER_DRACULA) {
+        Queue place = createQueue();
+        Queue index = createQueue();
+        enterQueue(place, from);
+        enterQueue(index, railLength);
+	    while (head != NULL) {
+            while (place->head != NULL) {
+                PlaceId fromplace = leaveQueue(place);
+                PlaceId railcheck = leaveQueue(index);
+                
+                int dup = 0;
+                i = 0;
+                while (reachable[i] != NOWHERE) {
+                    if (reachable[i] == fromplace) {
+                        dup = 1;
+                        break;
+                    }
+                    i++;
+                }
+                printf("railcheck: %d\n", railcheck);
+                
+                if (railcheck < 0 || dup == 1) {
+                    continue;
+                }
+                reachable[counter] = fromplace;
+                counter++;
+                
+                for (ConnList curr = MapGetConnections(new, fromplace); curr != NULL; curr = curr->next) {
+                    if (curr->type == RAIL) {
+                        enterQueue(place, curr->p);
+                        enterQueue(index, railcheck - 1);
+                    }
+                }
+            }
+            head = head->next;
+        }
+        dropQueue(place);
+        dropQueue(index);
+    }
+    
+    ConnList curr = MapGetConnections(new, from);
+    while (curr != NULL) {
+        if (curr->type == ROAD) {
+           int dup = 0;
+            i = 0;
+            while (reachable[i] != NOWHERE) {
+                if (reachable[i] == curr->p) {
+                    dup = 1;
+                    break;
+                }
+                i++;
+            }
+
+            if (player == PLAYER_DRACULA && head->p == ST_JOSEPH_AND_ST_MARY) {
+                curr = curr->next;
+                continue;
+            }
+            if (dup == 0) {
+                reachable[counter] = curr->p;
+                counter++;
+            }
+
+        }
+        curr = curr->next;
+    }
+        
+   
+    curr = MapGetConnections(new, from);
+    while (curr != NULL) {
+        if (curr->type == BOAT) {
+            reachable[counter] = curr->p;
+            counter++;
+        }
+        curr = curr->next;
+    }
+    
+    
+    
+    
+	i = 0;
+	int flag = 0;
+	while (i < counter) {
+	    if (reachable[i] == from) {
+	        flag = 1;
+	    }
+	    i++;
+	}
+	if (flag == 0) {
+	    reachable[counter] = from;
+	    counter++;    
+    }
+	*numReturnedLocs = counter;
+	return reachable;
+	
+	return 0;
 }
 
 PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
@@ -531,9 +645,114 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                               bool boat, int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	Map new = MapNew();
+	ConnList head = MapGetConnections(new, from);
+	int railLength = (round + player) % 4;
 	
-	*numReturnedLocs = 0;
-	return NULL;
+	PlaceId *reachable = malloc(sizeof(PlaceId) * 1024);
+	int i;
+	int counter = 0;
+	
+	for (i = 0; i < 1024; i++) reachable[i] = NOWHERE;
+	
+	
+
+	if (player != PLAYER_DRACULA && rail == true) {
+        Queue place = createQueue();
+        Queue index = createQueue();
+        enterQueue(place, from);
+        enterQueue(index, railLength);
+	    while (head != NULL) {
+            while (place->head != NULL) {
+                PlaceId fromplace = leaveQueue(place);
+                PlaceId railcheck = leaveQueue(index);
+                
+                int dup = 0;
+                i = 0;
+                while (reachable[i] != NOWHERE) {
+                    if (reachable[i] == fromplace) {
+                        dup = 1;
+                        break;
+                    }
+                    i++;
+                }
+                printf("railcheck: %d\n", railcheck);
+                
+                if (railcheck < 0 || dup == 1) {
+                    continue;
+                }
+                reachable[counter] = fromplace;
+                counter++;
+                
+                for (ConnList curr = MapGetConnections(new, fromplace); curr != NULL; curr = curr->next) {
+                    if (curr->type == RAIL) {
+                        enterQueue(place, curr->p);
+                        enterQueue(index, railcheck - 1);
+                    }
+                }
+            }
+            head = head->next;
+        }
+        dropQueue(place);
+        dropQueue(index);
+    }
+    
+    if (road == true) {
+        ConnList curr = head;
+        while (curr != NULL) {
+            if (curr->type == ROAD) {
+                int dup = 0;
+                i = 0;
+                while (reachable[i] != NOWHERE) {
+                    if (reachable[i] == curr->p) {
+                        dup = 1;
+                        break;
+                    }
+                    i++;
+                }
+  
+                if (player == PLAYER_DRACULA && head->p == ST_JOSEPH_AND_ST_MARY) {
+                    curr = curr->next;
+                    continue;
+                }
+                if (dup == 0) {
+                
+                    reachable[counter] = curr->p;
+                    counter++;
+                }
+
+            }
+            curr = curr->next;
+        }
+    }
+        
+    if (boat == true) {
+        ConnList curr = head;
+        while (curr != NULL) {
+            if (curr->type == BOAT) {
+                reachable[counter] = curr->p;
+                counter++;
+            }
+            curr = curr->next;
+        }
+    }
+    
+    
+    
+	i = 0;
+	int flag = 0;
+	while (i < counter) {
+	    if (reachable[i] == from) {
+	        flag = 1;
+	    }
+	    i++;
+	}
+	if (flag == 0) {
+	    reachable[counter] = from;
+	    counter++;    
+    }
+	*numReturnedLocs = counter;
+	return reachable;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -561,7 +780,7 @@ static void trapEncountered(GameView new, int placeID, int playerIndex)
 
 }
 
-void draculaEncounter(GameView new, int playerIndex)
+static void draculaEncounter(GameView new, int playerIndex)
 {
     new->player_hp[playerIndex] -= 4;
     if (new->player_hp[playerIndex] < 0) new->player_hp[playerIndex] = 0;
@@ -573,4 +792,87 @@ void draculaEncounter(GameView new, int playerIndex)
 	}
 }
 
+/*int railLengthCheck = -1;
+static void hunterReachableRecursive(ConnList head, PlaceId *hunterReachable, Map new, int railLength, int j) {
+    railLengthCheck++;
+    if (railLengthCheck == railLength) return;
+    ConnList curr = head;
+    while (curr != NULL) {
+        
+            
+        if (curr->type == RAIL) {
+            hunterReachable[j] = curr->p;
+            j++;
+        
+            ConnList newHead = MapGetConnections(new, curr->p);
+            hunterReachableRecursive(newHead, hunterReachable, new, railLength, j);
+        }
+        curr = curr->next;
+        railLengthCheck = 0;
+    }
+}*/
 
+
+
+// Queue.c ... list implementation of a queue
+
+// private function for creating list nodes
+static ConnList createNode (Item item)
+{
+	ConnList n = malloc (sizeof (ConnList));
+	assert (n != NULL);
+	n->p = item;
+	n->next = NULL;
+	return n;
+}
+
+// create an initially empty Queue
+Queue createQueue (void)
+{
+	Queue q = malloc (sizeof (struct QueueRep));
+	assert (q != NULL);
+	q->head = NULL;
+	q->tail = NULL;
+	q->size = 0;
+	return q;
+}
+
+// free all memory used by the Queue
+void dropQueue (Queue q)
+{
+	ConnList curr;
+	ConnList next;
+	assert (q != NULL);
+	curr = q->head;
+	while (curr != NULL) {
+		next = curr->next;
+		curr = next;
+	}
+	free (q);
+}
+
+// add new Item to the tail of the Queue
+void enterQueue (Queue q, Item it)
+{
+	assert (q != NULL);
+	ConnList n = createNode (it);
+	if (q->head == NULL) {
+		q->head = n;
+	} else {
+	    q->tail->next = n;
+	}
+	q->tail = n;
+	q->size++;
+}
+
+// remove Item from head of Queue; return it
+Item leaveQueue (Queue q)
+{
+	assert (q != NULL);
+	Item it = q->head->p;
+	ConnList delNode = q->head;
+	q->head = q->head->next;
+	free (delNode);
+	q->size--;
+	return it;
+}
