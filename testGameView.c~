@@ -344,16 +344,6 @@ int main(void)
 	
 		printf("Testing move/location history\n");
 		
-		// Old version
-		/*"GLS.... SGE.... HGE.... MGE.... DST.V.. "
-			"GCA.... SGE.... HGE.... MGE.... DC?T... "
-			"GGR.... SGE.... HGE.... MGE.... DC?T... "
-			"GAL.... SGE.... HGE.... MGE.... DD3T... "
-			"GSR.... SGE.... HGE.... MGE.... DHIT... "
-			"GSN.... SGE.... HGE.... MGE.... DC?T... "
-			"GMA.... SSTTTV.";*/
-		
-		
 		char *trail =
 			"GLS.... SGE.... HGE.... MGE.... DST.V.. "
 			"GCA.... SGE.... HGE.... MGE.... DC?T... "
@@ -366,19 +356,7 @@ int main(void)
 		
 		Message messages[32] = {};
 		GameView gv = GvNew(trail, messages);
-		/*// zijixiede
-		{
-		    int numReturnedLocs = 0;
-		    PlaceId *locs = GvGetReachable(gv, PLAYER_LORD_GODALMING, 6,
-                        EDINBURGH, &numReturnedLocs);
-            printf("numLocs: %d\n", numReturnedLocs);
-            for (int i = 0; i < numReturnedLocs; i++) {
-                
-                printf("trail: %s\n", placeIdToName(locs[i]));
-            
-            }
-        }*/
-		//printf("health: %d, corr: %d\n", GvGetHealth(gv, PLAYER_DR_SEWARD), GAME_START_HUNTER_LIFE_POINTS - 2 * LIFE_LOSS_TRAP_ENCOUNTER);
+		
 		assert(GvGetHealth(gv, PLAYER_DR_SEWARD) ==
 				GAME_START_HUNTER_LIFE_POINTS - 2 * LIFE_LOSS_TRAP_ENCOUNTER);
 		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == CITY_UNKNOWN);
@@ -400,7 +378,20 @@ int main(void)
 			if (canFree) free(moves);
 		}
 		
-		
+		// Lord Godalming's getReachable from Edinburgh
+		{
+		    int numReturnedLocs = 0;
+		    PlaceId *locs = GvGetReachable(gv, PLAYER_LORD_GODALMING, 6,
+                        EDINBURGH, &numReturnedLocs);
+            
+		    assert(numReturnedLocs == 5);
+			assert(locs[0] == EDINBURGH);
+			assert(locs[1] == MANCHESTER);
+			assert(locs[2] == LONDON);
+			assert(locs[3] == LIVERPOOL);
+			assert(locs[4] == NORTH_SEA);
+			free(locs);
+        }
 		
 		
 		
@@ -436,17 +427,10 @@ int main(void)
 		}
 		
 		
-		
-		
-		
-		
-		
-		
-		/*{
+		{
 		    int numLocs = 0; bool canFree = false;
 			PlaceId *lastLocs = GvGetLastLocations(gv, PLAYER_LORD_GODALMING, 7, 
 			                                  &numLocs, &canFree);
-		    printf("numLocs: %d\n", numLocs);
 			assert(numLocs == 7);
 			assert(lastLocs[0] == MADRID);
 			assert(lastLocs[1] == SANTANDER);
@@ -455,12 +439,9 @@ int main(void)
 			assert(lastLocs[4] == GRANADA);
 			assert(lastLocs[5] == CADIZ);
 			assert(lastLocs[6] == LISBON);
-			printf("canFree: %d\n", canFree);
 			if (canFree) free(lastLocs);
 		
-		    printf("ncuieaKFjwhefiwakewea\n");
-		
-		}*/
+		}
 		
 		GvFree(gv);
 		printf("Test passed!\n");
@@ -525,11 +506,12 @@ int main(void)
 			PlaceId *reachable = GvGetReachable(gv, PLAYER_DRACULA,
 			                                     2, EDINBURGH, &num);  
 			                                   
+	        assert(num == 3);  
+            assert(reachable[0] == MANCHESTER);
+			assert(reachable[1] == NORTH_SEA);
+			assert(reachable[2] == EDINBURGH);                
 			                                     
-			                                     
-			printf("reachable: %d\n", numLocs);
-            for (int i = 0; i < num; i++)
-                printf("locs: %d  %s\n", reachable[i], placeIdToName(reachable[i]));
+		
                 
 			assert(numLocs == 7);
 			sortPlaces(locs, numLocs);
