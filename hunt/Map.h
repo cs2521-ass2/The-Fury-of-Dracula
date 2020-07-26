@@ -20,9 +20,9 @@
 
 typedef struct connNode *ConnList;
 struct connNode {
-	PlaceId p; // ALICANTE, etc.
-	TransportType type; // ROAD, RAIL, BOAT
-	ConnList next; // link to next node
+    PlaceId p; // ALICANTE, etc.
+    TransportType type; // ROAD, RAIL, BOAT
+    ConnList next; // link to next node
 };
 
 // Map representation is hidden
