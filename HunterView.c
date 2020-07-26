@@ -102,9 +102,12 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
     bool canFree;
     PlaceId *last_moves = GvGetLastMoves(hv->gv, PLAYER_DRACULA, 6,
                             &numReturnedLocs, &canFree);
+    
+    // Check whether the last 6 moves are real locations
     for (int i = numReturnedLocs - 1; i >= 0; i--) {
         if (last_moves[i] >= MIN_REAL_PLACE && 
             last_moves[i] <= MAX_REAL_PLACE) {
+            // Change the round and return the last real location
             *round = current_round - numReturnedLocs + i;
             PlaceId last_location = last_moves[i];
             if (canFree)
@@ -114,6 +117,7 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
     }
     if (canFree)
         free(last_moves);
+    // Not found
     return NOWHERE;
 }
 
