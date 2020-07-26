@@ -120,6 +120,9 @@ GameView GvNew(char *pastPlays, Message messages[])
     // Copy the messages to gv->messages
     int totalMsg = 0;
     new->message = malloc(sizeof(char *) * 366);
+    for (i = 0; i < 366; i++) {
+        new->message[i] = NULL;
+    }
     
     // While the first character of the message is printable
     while (messages[totalMsg][0] >= '!' && messages[totalMsg][0] <= '~') {
@@ -333,7 +336,7 @@ void GvFree(GameView gv)
     
     free(gv->trapLocations);
     
-    for (i = 0; i < gv->turn; i++) {
+    for (i = 0; gv->message[i] != NULL && i < gv->turn; i++) {
         free(gv->message[i]);
     }
     

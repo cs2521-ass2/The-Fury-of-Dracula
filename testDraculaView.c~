@@ -160,11 +160,15 @@ int main(void)
         assert(locs[1] == CONSTANTA);
         assert(locs[2] == GALATZ);
         assert(locs[3] == SOFIA);
-        //free(locs);
+        free(locs);
         
         printf("Test passed!\n");
+<<<<<<< HEAD
         DvFree(dv);
         printf("1");
+=======
+        //DvFree(dv);
+>>>>>>> 4041661cac66efcc3a012be919f251589037e5ce
     }
 
     return EXIT_SUCCESS;
