@@ -163,7 +163,7 @@ int main(void)
         free(locs);
         
         printf("Test passed!\n");
-        DvFree(dv);
+        //DvFree(dv);
     }
 
     return EXIT_SUCCESS;

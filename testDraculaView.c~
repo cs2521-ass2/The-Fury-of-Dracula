@@ -131,7 +131,6 @@ int main(void)
         assert(moves[0] == GALATZ);
         assert(moves[1] == KLAUSENBURG);
         assert(moves[2] == HIDE);
-        printf("%d\n", moves[3]);
         assert(moves[3] == DOUBLE_BACK_1);
         free(moves);
         
