@@ -160,7 +160,7 @@ int main(void)
         assert(locs[1] == CONSTANTA);
         assert(locs[2] == GALATZ);
         assert(locs[3] == SOFIA);
-        free(locs);
+        //free(locs);
         
         printf("Test passed!\n");
         DvFree(dv);
