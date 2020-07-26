@@ -333,7 +333,7 @@ void GvFree(GameView gv)
     
     free(gv->trapLocations);
     
-    for (i = 0; i < gv->turn; i++) {
+    for (i = 0; gv->message[i] != NULL && i < gv->turn; i++) {
         free(gv->message[i]);
     }
     
