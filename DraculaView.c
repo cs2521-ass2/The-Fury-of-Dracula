@@ -131,7 +131,7 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
         if (history_moves[i] == DOUBLE_BACK_5) double_back_exist = true;
         for (int j = 0; j < num_reached; j++) {
             if (history_moves[i] == reached_location[j])
-                double_back[numReturned - i] = true;
+                double_back[numReturned - 1 - i] = true;
         }
     }
     if (canFree)

@@ -181,7 +181,7 @@ int main(void)
 			"GST.... SST.... HST.... MST.... DD1.... "
 			"GFR.... SFR.... HFR.... MFR....";
 		
-		Message messages[] = {
+		Message messages[14] = {
 			"Hello", "Rubbish", "Stuff", "", "Mwahahah",
 			"Aha!", "", "", "", "Back I go"};
 		
@@ -269,7 +269,7 @@ int main(void)
 			"GSZ.... SGE.... HGE.... MGE.... DGAT... "
 			"GSZ.... SGE.... HGE.... MGE....";
 		
-		Message messages[15] = {};
+		Message messages[19] = {};
 		GameView gv = GvNew(trail, messages);
 		
 		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == GALATZ);
@@ -400,7 +400,24 @@ int main(void)
 			if (canFree) free(moves);
 		}
 		
+<<<<<<< HEAD
 		
+=======
+		// Lord Godalming's getReachable from Edinburgh
+		{
+		    int numReturnedLocs = 0;
+		    PlaceId *locs = GvGetReachable(gv, PLAYER_LORD_GODALMING, 6,
+                        EDINBURGH, &numReturnedLocs);
+            
+		    assert(numReturnedLocs == 5);
+			assert(locs[0] == EDINBURGH);
+			assert(locs[1] == MANCHESTER);
+			assert(locs[2] == LONDON);
+			assert(locs[3] == LIVERPOOL);
+			assert(locs[4] == NORTH_SEA);
+			free(locs);
+        }
+>>>>>>> 02f5d0f22e8a50cdb9236642da210ecbf5e952d4
 		
 		
 		
@@ -433,6 +450,26 @@ int main(void)
 			assert(locs[5] == CITY_UNKNOWN);
 			if (canFree) free(locs);
 			
+<<<<<<< HEAD
+=======
+		}
+		
+		
+		{
+		    int numLocs = 0; bool canFree = false;
+			PlaceId *lastLocs = GvGetLastLocations(gv, PLAYER_LORD_GODALMING, 7, 
+			                                  &numLocs, &canFree);
+			assert(numLocs == 7);
+			assert(lastLocs[0] == MADRID);
+			assert(lastLocs[1] == SANTANDER);
+			assert(lastLocs[2] == SARAGOSSA);
+			assert(lastLocs[3] == ALICANTE);
+			assert(lastLocs[4] == GRANADA);
+			assert(lastLocs[5] == CADIZ);
+			assert(lastLocs[6] == LISBON);
+			if (canFree) free(lastLocs);
+		
+>>>>>>> 02f5d0f22e8a50cdb9236642da210ecbf5e952d4
 		}
 		
 		
@@ -525,11 +562,20 @@ int main(void)
 			PlaceId *reachable = GvGetReachable(gv, PLAYER_DRACULA,
 			                                     2, EDINBURGH, &num);  
 			                                   
+<<<<<<< HEAD
 			                                     
 			                                     
 			printf("reachable: %d\n", numLocs);
             for (int i = 0; i < num; i++)
                 printf("locs: %d  %s\n", reachable[i], placeIdToName(reachable[i]));
+=======
+	        assert(num == 3);  
+            assert(reachable[0] == MANCHESTER);
+			assert(reachable[1] == NORTH_SEA);
+			assert(reachable[2] == EDINBURGH);                
+			                                     
+		
+>>>>>>> 02f5d0f22e8a50cdb9236642da210ecbf5e952d4
                 
 			assert(numLocs == 7);
 			sortPlaces(locs, numLocs);
