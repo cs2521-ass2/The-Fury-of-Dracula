@@ -154,8 +154,10 @@ GameView GvNew(char *pastPlays, Message messages[])
 	    
 	    // If the hunter is in hospital, regain their full life points
 	    for (i = 0; i < 4; i++) {
-	        if (new->inhospital[i] == 1)
+	        if (new->inhospital[i] == 1) {
 	            new->player_hp[i] = GAME_START_HUNTER_LIFE_POINTS;
+	            new->inhospital[i] = 0;
+            }
 	    }
 	    
 	    new->turn++;  
@@ -243,6 +245,16 @@ GameView GvNew(char *pastPlays, Message messages[])
 		
 		// If the current player is a hunter
 		if (step[0] != 'D') {
+		    
+		    // If a hunter decides to rest, he can gain three life points
+		    //printf("PlayerIndex: %d, Placeid: %d, lastRound: %d\n", playerIndex, placeID, new->past_route[playerIndex][new->round]);
+		    if (new->round >= 1 
+		        && placeID == new->past_route[playerIndex][new->round]) {
+		        new->player_hp[playerIndex] += 3;
+		        if (new->player_hp[playerIndex] > 9) {
+		            new->player_hp[playerIndex] = 9;
+		        }
+		    }   
 		
 			// Encounter surprises
 			if (step[3] == 'T') {
@@ -317,8 +329,8 @@ GameView GvNew(char *pastPlays, Message messages[])
 
         // Extract next turn
 	    step = strtok(NULL, " ");
+	    new->round = new->turn / 5;
 	}
-	new->round = new->turn / 5;
     
 	return new;
 }
@@ -337,8 +349,7 @@ void GvFree(GameView gv)
     free(gv->trapLocations);
     
     for (i = 0; gv->message[i] != NULL && i < gv->turn; i++) {
-        printf("%d  %s\n", i, gv->message[i]);
-        //free(gv->message[i]);
+        free(gv->message[i]);
     }
     
 	free(gv);
@@ -423,6 +434,7 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 	*canFree = false;
 	int i = 0;
 	while (gv->past_route[player][i] != NOWHERE) {
+	    //printf("Round: %d, player: %d, place: %d\n", i, player, gv->past_route[player][i]);
 	    i++;
 	}
 	*numReturnedMoves = i;
