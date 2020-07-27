@@ -127,7 +127,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
     PlaceId source = HvGetPlayerLocation(hv, hunter);
     Round tmp_round = HvGetRound(hv);
     int tmp_returnedLocs = 0;
-  //  int found = 0;
+    bool found = false;
     struct Queue* bfs = NewQueue(NUM_REAL_PLACES);
     //array of predecessors.
     PlaceId Pred[NUM_REAL_PLACES];
@@ -138,41 +138,53 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
     Pred[source] = source;
     enqueue(bfs, source);
     
-    while (!isEmpty(bfs)) {
+    printf("%d dest\n", dest);
+    printf("%d source\n", source);
+    while (!isEmpty(bfs) && found == false) {
         PlaceId head = dequeue(bfs);
+        printf("%d\n", head);
+        
         if (head == dest) {
-     //       found = 1;
-            break; 
-        }
-        PlaceId *to_enqueue = GvGetReachable(hv->gv, hunter, tmp_round,
-                               head, &tmp_returnedLocs);
-        for (int i=0; i<tmp_returnedLocs; i++){
-            if (Pred[to_enqueue[i]] == NOWHERE) {
-                enqueue(bfs, to_enqueue[i]);
-                Pred[to_enqueue[i]] = head;
+                
+            found = true;
+        } else {
+            PlaceId *to_enqueue = GvGetReachable(hv->gv, hunter, tmp_round,
+                head, &tmp_returnedLocs);
+            for (int i = 0; i < tmp_returnedLocs; i++){
+                if (Pred[to_enqueue[i]] == NOWHERE) {
+                    enqueue(bfs, to_enqueue[i]);
+                    Pred[to_enqueue[i]] = head;
+                }
             }
+            tmp_round += 1;
         }
-        tmp_round += 1;
+        
     }
-  //  if (found == 0) 
-    int count = 0;
-    PlaceId i = dest;
-    while (i != NOWHERE && i != source) {
-        i = Pred[i];
-        count++;
+    if (found) {
+        int count = 0;
+        PlaceId i = dest;
+        while (i != NOWHERE && i != source) {
+            printf("i = %d\n", i);
+            count++;
+            i = Pred[i];
+        }
+        printf("i = %d\n", i);
+        i = dest;
+        int j = count - 1;
+        *pathLength = count;
+        PlaceId *path = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+        while (j >= 0 && i != source) {
+            path[j] = i;
+            i = Pred[i];
+            j--;
+        }
+        return path;
+    } else {
+        printf("not found\n");
+        *pathLength = 0;
+        return NULL;
     }
-    i = dest;
-    int j = count;
-    PlaceId *path[NUM_REAL_PLACES];
-    while (i != NOWHERE && i != source) {
-        *path[j] = i;
-        i = Pred[i];
-        j--;
-    }
-    *path[0] = source;
-    *pathLength = count+1;
     
-    return path[0];
     
    /* PlaceId source = HvGetPlayerLocation(hv, hunter);
     Round tmp_round = HvGetRound(hv);
