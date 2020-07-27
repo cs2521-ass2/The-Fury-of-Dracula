@@ -50,7 +50,7 @@ void enqueue(struct Queue* queue, PlaceId p)
 
 // Function to remove an item from queue.
 // It changes front and size
-int dequeue(struct Queue* queue)
+PlaceId dequeue(struct Queue* queue)
 {
     PlaceId to_leave = queue->array[queue->front];
     queue->front = queue->front + 1;
