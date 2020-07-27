@@ -127,6 +127,56 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
     PlaceId source = HvGetPlayerLocation(hv, hunter);
     Round tmp_round = HvGetRound(hv);
     int tmp_returnedLocs = 0;
+  //  int found = 0;
+    struct Queue* bfs = NewQueue(NUM_REAL_PLACES);
+    //array of predecessors.
+    PlaceId Pred[NUM_REAL_PLACES];
+    
+    for(int i=0; i<NUM_REAL_PLACES; i++)
+        Pred[i] = NOWHERE;
+    
+    Pred[source] = source;
+    enqueue(bfs, source);
+    
+    while (!isEmpty(bfs)) {
+        PlaceId head = dequeue(bfs);
+        if (head == dest) {
+     //       found = 1;
+            break; 
+        }
+        PlaceId *to_enqueue = GvGetReachable(hv->gv, hunter, tmp_round,
+                               head, &tmp_returnedLocs);
+        for (int i=0; i<tmp_returnedLocs; i++){
+            if (Pred[to_enqueue[i]] == NOWHERE) {
+                enqueue(bfs, to_enqueue[i]);
+                Pred[to_enqueue[i]] = head;
+            }
+        }
+        tmp_round += 1;
+    }
+  //  if (found == 0) 
+    int count = 0;
+    PlaceId i = dest;
+    while (i != NOWHERE && i != source) {
+        i = Pred[i];
+        count++;
+    }
+    i = dest;
+    int j = count;
+    PlaceId *path[NUM_REAL_PLACES];
+    while (i != NOWHERE && i != source) {
+        *path[j] = i;
+        i = Pred[i];
+        j--;
+    }
+    *path[0] = source;
+    *pathLength = count+1;
+    
+    return path[0];
+    
+   /* PlaceId source = HvGetPlayerLocation(hv, hunter);
+    Round tmp_round = HvGetRound(hv);
+    int tmp_returnedLocs = 0;
     //make new queue for places to visit
     struct Queue* ToVisit = NewQueue(MAX_REAL_PLACE);
     //initialise 2D array of visited paths.
@@ -169,7 +219,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
             tmp_round += 1;
         }
     }
-    return NULL;
+    return NULL; */
 }
 
 ////////////////////////////////////////////////////////////////////////
