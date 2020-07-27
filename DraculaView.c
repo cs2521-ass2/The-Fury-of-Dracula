@@ -99,8 +99,7 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
     Round current_round = DvGetRound(dv);
     
     // Hasn't made a move yet or invalid place
-    if (current_round < 1 || current_place > MAX_REAL_PLACE 
-        || current_place < MIN_REAL_PLACE) {
+    if (current_place == NOWHERE) {
         *numReturnedMoves = 0;
         return NULL;
     }
@@ -272,8 +271,7 @@ PlaceId *DvWhereCanTheyGo(DraculaView dv, Player player,
     PlaceId current_place = DvGetPlayerLocation(dv, player);
     Round current_round = DvGetRound(dv);
     // Hasn't made a move
-    if (current_round < 1 || current_place > MAX_REAL_PLACE 
-        || current_place < MIN_REAL_PLACE) {
+    if (current_place == NOWHERE) {
         *numReturnedLocs = 0;
         return NULL;
     }
@@ -323,8 +321,7 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
     PlaceId current_place = DvGetPlayerLocation(dv, player);
     Round current_round = DvGetRound(dv);
     // Hasn't made a move
-    if (current_round < 1 || current_place > MAX_REAL_PLACE 
-        || current_place < MIN_REAL_PLACE) {
+    if (current_place == NOWHERE) {
         *numReturnedLocs = 0;
         return NULL;
     }
