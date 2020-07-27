@@ -132,20 +132,27 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
     //array of predecessors.
     PlaceId Pred[NUM_REAL_PLACES];
     
-    for(int i=0; i<NUM_REAL_PLACES; i++)
+    for(int i = 0; i < NUM_REAL_PLACES; i++)
         Pred[i] = NOWHERE;
     
     Pred[source] = source;
     enqueue(bfs, source);
     
-    printf("%d dest\n", dest);
-    printf("%d source\n", source);
+   // printf("%d dest\n", dest);
+   // printf("%d source\n", source);
+    
     while (!isEmpty(bfs) && found == false) {
         PlaceId head = dequeue(bfs);
-        printf("%d\n", head);
+        //printf("%d\n", head);
+        int level = 0;
+        PlaceId current = head;
+        while (current != NOWHERE && current != source) {
+            level++;
+            current = Pred[current];
+        }
+        tmp_round += level;
         
         if (head == dest) {
-                
             found = true;
         } else {
             PlaceId *to_enqueue = GvGetReachable(hv->gv, hunter, tmp_round,
@@ -156,31 +163,30 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                     Pred[to_enqueue[i]] = head;
                 }
             }
-            tmp_round += 1;
+            
         }
-        
     }
     if (found) {
         int count = 0;
         PlaceId i = dest;
         while (i != NOWHERE && i != source) {
-            printf("i = %d\n", i);
             count++;
             i = Pred[i];
         }
-        printf("i = %d\n", i);
+        
         i = dest;
         int j = count - 1;
         *pathLength = count;
         PlaceId *path = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
         while (j >= 0 && i != source) {
+         //   printf("i = %d\n", i);
             path[j] = i;
             i = Pred[i];
             j--;
         }
         return path;
     } else {
-        printf("not found\n");
+       // printf("not found\n");
         *pathLength = 0;
         return NULL;
     }

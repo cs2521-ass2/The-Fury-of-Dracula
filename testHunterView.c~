@@ -302,25 +302,24 @@ int main(void)
             int pathLength = -1;
             PlaceId *path = HvGetShortestPathTo(hv, PLAYER_LORD_GODALMING,
                                                 BARCELONA, &pathLength);
-            printf("length %d\n", pathLength);
             assert(pathLength == 2);
             assert(path[0] == MADRID);
             assert(path[1] == BARCELONA);
             free(path);
         }
         
-/*        {*/
-/*            printf("\tLisbon -> Cologne (Lord Godalming, Round 1)\n");*/
-/*            int pathLength = -1;*/
-/*            PlaceId *path = HvGetShortestPathTo(hv, PLAYER_LORD_GODALMING,*/
-/*                                                COLOGNE, &pathLength);*/
-/*            printf("length %d\n", pathLength);*/
-/*            assert(pathLength == 3);*/
-/*            assert(path[0] == MADRID);*/
-/*            assert(path[1] == BORDEAUX);*/
-/*            assert(path[2] == COLOGNE);*/
-/*            free(path);*/
-/*        }*/
+        {
+            printf("\tLisbon -> Cologne (Lord Godalming, Round 1)\n");
+            int pathLength = -1;
+            PlaceId *path = HvGetShortestPathTo(hv, PLAYER_LORD_GODALMING,
+                                                COLOGNE, &pathLength);
+            printf("length %d\n", pathLength);
+            assert(pathLength == 3);
+            assert(path[0] == MADRID);
+            assert(path[1] == BORDEAUX);
+            assert(path[2] == COLOGNE);
+            free(path);
+        }
         
         {
             printf("\tSwansea -> Hamburg (Van Helsing, Round 1)\n");
