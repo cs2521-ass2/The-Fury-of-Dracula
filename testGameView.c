@@ -446,6 +446,31 @@ int main(void)
         GvFree(gv);
         printf("Test passed!\n");
     }
+    
+    
+    
+    {///////////////////////////////////////////////////////////////////
+    
+        printf("Testing if a hunter regain three life points\n");
+        
+        char *trail =
+			"GGE.... SGE.... HGE.... MGE.... DC?.V.. "
+			"GGE.... SGE.... HGE.... MGE.... DSTT... "
+			"GGE.... SGE.... HGE.... MGE.... DHIT... "
+			"GGE.... SGE.... HGE.... MGE.... DD1.... "
+			"GSTTTD. SGE.... HGE.... MGE.... DBU.... "
+			"GST.... SGE.... HGE.... MGE.... DCO.... ";
+		
+		Message messages[21] = {};
+		GameView gv = GvNew(trail, messages);
+		
+		assert(GvGetHealth(gv, PLAYER_LORD_GODALMING) == 7);
+		
+		printf("Test passed!\n");
+
+    }
+    
+    
 
     {///////////////////////////////////////////////////////////////////
     
@@ -544,4 +569,6 @@ int main(void)
 
     return EXIT_SUCCESS;
 }
+
+
 
