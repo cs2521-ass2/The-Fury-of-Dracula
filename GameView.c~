@@ -216,6 +216,9 @@ GameView GvNew(char *pastPlays, Message messages[])
     // Copy the messages to gv->messages
     int totalMsg = 0;
     new->message = malloc(sizeof(char *) * 366);
+    for (i = 0; i < 366; i++) {
+        new->message[i] = NULL;
+    }
     
 <<<<<<< HEAD
 
@@ -494,7 +497,8 @@ void GvFree(GameView gv)
 =======
     
     for (i = 0; gv->message[i] != NULL && i < gv->turn; i++) {
-        free(gv->message[i]);
+        printf("%d  %s\n", i, gv->message[i]);
+        //free(gv->message[i]);
     }
     
 >>>>>>> 02f5d0f22e8a50cdb9236642da210ecbf5e952d4

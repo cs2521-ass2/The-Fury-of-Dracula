@@ -120,6 +120,9 @@ GameView GvNew(char *pastPlays, Message messages[])
     // Copy the messages to gv->messages
     int totalMsg = 0;
     new->message = malloc(sizeof(char *) * 366);
+    for (i = 0; i < 366; i++) {
+        new->message[i] = NULL;
+    }
     
     // While the first character of the message is printable
     while (messages[totalMsg][0] >= '!' && messages[totalMsg][0] <= '~') {
