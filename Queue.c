@@ -17,88 +17,88 @@ struct QueueNode {
 };
 
 struct QueueRep {
-	ConnList head;
-	ConnList tail;
-	int size;
+    ConnList head;
+    ConnList tail;
+    int size;
 };
 
 // private function for creating list nodes
 static ConnList createNode (Item item)
 {
-	ConnList n = malloc (sizeof (struct QueueNode));
-	assert (n != NULL);
-	n->p = item;
-	n->next = NULL;
-	return n;
+    ConnList n = malloc (sizeof (struct QueueNode));
+    assert (n != NULL);
+    n->p = item;
+    n->next = NULL;
+    return n;
 }
 
 // create an initially empty Queue
 Queue createQueue (void)
 {
-	Queue q = malloc (sizeof (struct QueueRep));
-	assert (q != NULL);
-	q->head = NULL;
-	q->tail = NULL;
-	q->size = 0;
-	return q;
+    Queue q = malloc (sizeof (struct QueueRep));
+    assert (q != NULL);
+    q->head = NULL;
+    q->tail = NULL;
+    q->size = 0;
+    return q;
 }
 
 // free all memory used by the Queue
 void dropQueue (Queue q)
 {
-	ConnList curr;
-	ConnList next;
-	assert (q != NULL);
-	curr = q->head;
-	while (curr != NULL) {
-		next = curr->next;
-		curr = next;
-	}
-	free (q);
+    ConnList curr;
+    ConnList next;
+    assert (q != NULL);
+    curr = q->head;
+    while (curr != NULL) {
+        next = curr->next;
+        curr = next;
+    }
+    free (q);
 }
 
 // add new Item to the tail of the Queue
 void enterQueue (Queue q, Item it)
 {
-	assert (q != NULL);
-	ConnList n = createNode (it);
-	if (q->head == NULL) {
-		q->head = n;
-	} else {
-	    q->tail->next = n;
-	}
-	q->tail = n;
-	q->size++;
+    assert (q != NULL);
+    ConnList n = createNode (it);
+    if (q->head == NULL) {
+        q->head = n;
+    } else {
+        q->tail->next = n;
+    }
+    q->tail = n;
+    q->size++;
 }
 
 // remove Item from head of Queue; return it
 Item leaveQueue (Queue q)
 {
-	assert (q != NULL);
-	Item it = q->head->p;
-	ConnList delNode = q->head;
-	q->head = q->head->next;
-	free (delNode);
-	q->size--;
-	return it;
+    assert (q != NULL);
+    Item it = q->head->p;
+    ConnList delNode = q->head;
+    q->head = q->head->next;
+    free (delNode);
+    q->size--;
+    return it;
 }
 
 // return count of Items in Queue
 int queueLength (Queue q)
 {
-	assert (q != NULL);
-	return q->size;
+    assert (q != NULL);
+    return q->size;
 }
 
 // display Queue as list of 2-digit numbers
 void showQueue (Queue q)
 {
-	printf ("H");
-	ConnList curr;
-	curr = q->head;
-	while (curr != NULL) {
-		printf (" %02d", curr->p);
-		curr = curr->next;
-	}
-	printf (" T\n");
+    printf ("H");
+    ConnList curr;
+    curr = q->head;
+    while (curr != NULL) {
+        printf (" %02d", curr->p);
+        curr = curr->next;
+    }
+    printf (" T\n");
 }

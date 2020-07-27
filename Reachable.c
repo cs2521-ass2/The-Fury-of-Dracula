@@ -1,30 +1,30 @@
 Map new = MapNew();
-	ConnList head = MapGetConnections(new, from);
-	
-	if (player == PLAYER_DRACULA) {
-	    bool canFree = 0;
-	    PlaceId *draculaPastRoute = GvGetLastMoves(gv, player, 6,
+    ConnList head = MapGetConnections(new, from);
+    
+    if (player == PLAYER_DRACULA) {
+        bool canFree = 0;
+        PlaceId *draculaPastRoute = GvGetLastMoves(gv, player, 6,
                             numReturnedLocs, &canFree);
         //printf("trail: %s\n", draculaTrail);
-	    int i = 0;
-	    int isDoubleBack = 0;
-	    int isHide = 0;
-	    while (i < 6) {
-	        if (draculaPastRoute[i] == HIDE) {
-	            isHide = i;
-	        }
-	        
-	        if (draculaPastRoute[i] >= DOUBLE_BACK_1 && draculaPastRoute[i] <= DOUBLE_BACK_5) {
-	            isDoubleBack = i;
+        int i = 0;
+        int isDoubleBack = 0;
+        int isHide = 0;
+        while (i < 6) {
+            if (draculaPastRoute[i] == HIDE) {
+                isHide = i;
             }
-	            
-	        i++;
-	    }
-	    //printf("doubleBack: %d, i: %d\n", draculaTrail[i], i);
-	    PlaceId *draculaTrail = GvGetLastLocations(gv, player, 6,
+            
+            if (draculaPastRoute[i] >= DOUBLE_BACK_1 && draculaPastRoute[i] <= DOUBLE_BACK_5) {
+                isDoubleBack = i;
+            }
+                
+            i++;
+        }
+        //printf("doubleBack: %d, i: %d\n", draculaTrail[i], i);
+        PlaceId *draculaTrail = GvGetLastLocations(gv, player, 6,
                             numReturnedLocs, &canFree);
-	    int doubleBackPlace = NOWHERE;
-	    int hidePlace = NOWHERE;
+        int doubleBackPlace = NOWHERE;
+        int hidePlace = NOWHERE;
         if (isDoubleBack != 0) {// DoubleBack used and hide used
             ConnList curr = head;
             int j = 0;
@@ -55,7 +55,7 @@ Map new = MapNew();
         
         
         ConnList curr = head;
-	    int counter0 = 0; // counter0 = *numReturnedLocs;
+        int counter0 = 0; // counter0 = *numReturnedLocs;
         while (curr != NULL) {
             printf("curr->p: %d, numLocs: %d\n", curr->p, counter0);
             if (curr->p != doubleBackPlace && curr->p != hidePlace) {
@@ -89,7 +89,7 @@ Map new = MapNew();
         if (isHide == 0) { // Hide not used
             draculaReachable[counter] = draculaTrail[0];
         }  
-	    //if (canFree) free(draculaTrail);
-	    *numReturnedLocs = counter0;
-	    return draculaReachable;
-	}
+        //if (canFree) free(draculaTrail);
+        *numReturnedLocs = counter0;
+        return draculaReachable;
+    }

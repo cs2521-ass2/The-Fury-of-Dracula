@@ -102,9 +102,12 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
     bool canFree;
     PlaceId *last_moves = GvGetLastMoves(hv->gv, PLAYER_DRACULA, 6,
                             &numReturnedLocs, &canFree);
+    
+    // Check whether the last 6 moves are real locations
     for (int i = numReturnedLocs - 1; i >= 0; i--) {
         if (last_moves[i] >= MIN_REAL_PLACE && 
             last_moves[i] <= MAX_REAL_PLACE) {
+            // Change the round and return the last real location
             *round = current_round - numReturnedLocs + i;
             PlaceId last_location = last_moves[i];
             if (canFree)
@@ -114,13 +117,14 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
     }
     if (canFree)
         free(last_moves);
+    // Not found
     return NOWHERE;
 }
 
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
-	PlaceId source = HvGetPlayerLocation(hv, hunter);
+    PlaceId source = HvGetPlayerLocation(hv, hunter);
     Round tmp_round = HvGetRound(hv);
     int tmp_returnedLocs = 0;
     //make new queue for places to visit
@@ -133,8 +137,8 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
     for (int i = 0; i <= MAX_REAL_PLACE; i++)
         PathsVisited[i] = malloc((MAX_REAL_PLACE + 1) * sizeof(PlaceId));
     for (int i=0;i <=MAX_REAL_PLACE; i++){
-	    for(int j=0; j<=MAX_REAL_PLACE; j++){
-		    PathsVisited[i][j] = NOWHERE;
+        for(int j=0; j<=MAX_REAL_PLACE; j++){
+            PathsVisited[i][j] = NOWHERE;
         }
     }  
     PathsVisited[source][0] = source;
@@ -146,26 +150,26 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
         PlaceId tmp_loc = dequeue(ToVisit);
         if (tmp_loc == dest) {
             for (int i = 0; i <= MAX_REAL_PLACE && PathsVisited[tmp_loc][i] != NOWHERE ; i++) {
-	            *pathLength = i + 1;
-	        }
-	        return PathsVisited[tmp_loc];
-	    }
-	    PlaceId *to_enqueue = GvGetReachable(hv->gv, hunter, tmp_round, 
-	                          tmp_loc, &tmp_returnedLocs);
-	  for(int i = 0; i < tmp_returnedLocs; i++) {
-	        int QueueCheck = isNotInQueue(ToVisit, to_enqueue[i]);
-	        if (QueueCheck == 1) {
-	            enqueue(ToVisit, to_enqueue[i]);
+                *pathLength = i + 1;
+            }
+            return PathsVisited[tmp_loc];
+        }
+        PlaceId *to_enqueue = GvGetReachable(hv->gv, hunter, tmp_round, 
+                              tmp_loc, &tmp_returnedLocs);
+      for(int i = 0; i < tmp_returnedLocs; i++) {
+            int QueueCheck = isNotInQueue(ToVisit, to_enqueue[i]);
+            if (QueueCheck == 1) {
+                enqueue(ToVisit, to_enqueue[i]);
                 //Copy the path of tmp_loc into path to to_enqueue[i]  
                 int j = 0;
-		        for (; PathsVisited[tmp_loc][j] <= MAX_REAL_PLACE &&  PathsVisited[tmp_loc][j] >= MIN_REAL_PLACE ; j++) 
-			        PathsVisited[to_enqueue[i]][j] = PathsVisited[tmp_loc][j];
-		        PathsVisited[to_enqueue[i]][j+1] = to_enqueue[i];	    
-	        }
+                for (; PathsVisited[tmp_loc][j] <= MAX_REAL_PLACE &&  PathsVisited[tmp_loc][j] >= MIN_REAL_PLACE ; j++) 
+                    PathsVisited[to_enqueue[i]][j] = PathsVisited[tmp_loc][j];
+                PathsVisited[to_enqueue[i]][j+1] = to_enqueue[i];       
+            }
             tmp_round += 1;
         }
-	}
-	return NULL;
+    }
+    return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -173,7 +177,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 
 PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 {
-	Player curr_player = HvGetPlayer(hv);
+    Player curr_player = HvGetPlayer(hv);
     return HvWhereCanTheyGo(hv,curr_player, numReturnedLocs);
 }
 
@@ -181,7 +185,7 @@ PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
                              bool boat, int *numReturnedLocs)
 {
     Player curr_player = HvGetPlayer(hv);
-	return HvWhereCanTheyGoByType(hv, curr_player, road, rail, boat, numReturnedLocs);
+    return HvWhereCanTheyGoByType(hv, curr_player, road, rail, boat, numReturnedLocs);
 }
 
 PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
@@ -212,7 +216,7 @@ PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
 PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
-{	
+{   
     PlaceId curr_loc = GvGetPlayerLocation(hv->gv, player);
     Round curr_round = HvGetRound(hv);
 

@@ -22,9 +22,9 @@
 //
 // Based on the program by David Collien, written in 2012
 //
-// 2017-12-04	v1.1	Team Dracula <cs2521@cse.unsw.edu.au>
-// 2018-12-31	v1.2	Team Dracula <cs2521@cse.unsw.edu.au>
-// 2020-07-10	v1.3	Team Dracula <cs2521@cse.unsw.edu.au>
+// 2017-12-04   v1.1    Team Dracula <cs2521@cse.unsw.edu.au>
+// 2018-12-31   v1.2    Team Dracula <cs2521@cse.unsw.edu.au>
+// 2020-07-10   v1.3    Team Dracula <cs2521@cse.unsw.edu.au>
 //
 ////////////////////////////////////////////////////////////////////////
 
@@ -78,24 +78,24 @@ typedef HunterView View;
 
 int main(void)
 {
-	char *pastPlays = xPastPlays;
-	Message msgs[] = xMsgs;
+    char *pastPlays = xPastPlays;
+    Message msgs[] = xMsgs;
 
-	View state = ViewNew(pastPlays, msgs);
-	decideMove(state);
-	ViewFree(state);
+    View state = ViewNew(pastPlays, msgs);
+    decideMove(state);
+    ViewFree(state);
 
-	printf("Move: %s, Message: %s\n", latestPlay, latestMessage);
-	return EXIT_SUCCESS;
+    printf("Move: %s, Message: %s\n", latestPlay, latestMessage);
+    return EXIT_SUCCESS;
 }
 
 // Saves characters from play (and appends a terminator)
 // and saves characters from message (and appends a terminator)
 void registerBestPlay(char *play, Message message)
 {
-	strncpy(latestPlay, play, MOVE_SIZE - 1);
-	latestPlay[MOVE_SIZE - 1] = '\0';
+    strncpy(latestPlay, play, MOVE_SIZE - 1);
+    latestPlay[MOVE_SIZE - 1] = '\0';
 
-	strncpy(latestMessage, message, MESSAGE_SIZE - 1);
-	latestMessage[MESSAGE_SIZE - 1] = '\0';
+    strncpy(latestMessage, message, MESSAGE_SIZE - 1);
+    latestMessage[MESSAGE_SIZE - 1] = '\0';
 }
