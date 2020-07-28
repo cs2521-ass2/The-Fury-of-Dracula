@@ -18,7 +18,6 @@
 #include "GameView.h"
 #include "Map.h"
 #include "Places.h"
-#include "testUtils.h"
 
 #define NUM_HUNTERS 4
 
@@ -41,7 +40,7 @@ struct QueueRep {
 
 struct gameView {
 
-	int player_hp[5];    // player_hp[0] = LG's health point
+    int player_hp[5];    // player_hp[0] = LG's health point
 					     // player_hp[1] = DS's health point
 					     // player_hp[2] = VH's health point
 					     // player_hp[3] = MH's health point
@@ -85,7 +84,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	// Initialise each player's life points
 	i = 0;
 	while (i < NUM_HUNTERS) {
-	    new->player_hp[i] = GAME_START_HUNTER_LIFE_POINTS;
+        new->player_hp[i] = GAME_START_HUNTER_LIFE_POINTS;
 	    i++;
 	}
 	new->player_hp[i] = GAME_START_BLOOD_POINTS;

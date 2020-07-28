@@ -415,79 +415,6 @@ int main(void)
             PlaceId *locs = GvGetLocationHistory(gv, PLAYER_DRACULA,
                                                  &numLocs, &canFree);
          
-<<<<<<< HEAD
-			assert(numLocs == 6);
-			assert(locs[0] == STRASBOURG);
-			assert(locs[1] == CITY_UNKNOWN);
-			assert(locs[2] == CITY_UNKNOWN);
-			assert(locs[3] == STRASBOURG);
-			assert(locs[4] == STRASBOURG);
-			assert(locs[5] == CITY_UNKNOWN);
-			if (canFree) free(locs);
-			
-		}
-		
-		
-		{
-		    int numLocs = 0; bool canFree = false;
-			PlaceId *lastLocs = GvGetLastLocations(gv, PLAYER_LORD_GODALMING, 7, 
-			                                  &numLocs, &canFree);
-			assert(numLocs == 7);
-			assert(lastLocs[0] == MADRID);
-			assert(lastLocs[1] == SANTANDER);
-			assert(lastLocs[2] == SARAGOSSA);
-			assert(lastLocs[3] == ALICANTE);
-			assert(lastLocs[4] == GRANADA);
-			assert(lastLocs[5] == CADIZ);
-			assert(lastLocs[6] == LISBON);
-			if (canFree) free(lastLocs);
-		
-		}
-		
-		GvFree(gv);
-		printf("Test passed!\n");
-	}
-
-
-    {///////////////////////////////////////////////////////////////////
-    
-        printf("Testing if a hunter regain three life points\n");
-        
-        char *trail =
-			"GGE.... SGE.... HGE.... MGE.... DC?.V.. "
-			"GGE.... SGE.... HGE.... MGE.... DSTT... "
-			"GGE.... SGE.... HGE.... MGE.... DHIT... "
-			"GGE.... SGE.... HGE.... MGE.... DD1.... "
-			"GSTTTD. SGE.... HGE.... MGE.... DBU.... "
-			"GST.... SGE.... HGE.... MGE.... DCO.... ";
-		
-		Message messages[21] = {};
-		GameView gv = GvNew(trail, messages);
-		
-		assert(GvGetHealth(gv, PLAYER_LORD_GODALMING) == 7);
-		
-		printf("Test passed!\n");
-
-    }
-
-
-
-	{///////////////////////////////////////////////////////////////////
-	
-		printf("Testing connections\n");
-		
-		char *trail = "";
-		Message messages[] = {};
-		GameView gv = GvNew(trail, messages);
-
-		{
-			printf("\tChecking Galatz road connections "
-			       "(Lord Godalming, Round 1)\n");
-			int numLocs = -1;
-			PlaceId *locs = GvGetReachableByType(gv, PLAYER_LORD_GODALMING,
-			                                     1, GALATZ, true, false,
-			                                     false, &numLocs);
-=======
             assert(numLocs == 6);
             assert(locs[0] == STRASBOURG);
             assert(locs[1] == CITY_UNKNOWN);
@@ -519,6 +446,31 @@ int main(void)
         GvFree(gv);
         printf("Test passed!\n");
     }
+    
+    
+    
+    {///////////////////////////////////////////////////////////////////
+    
+        printf("Testing if a hunter regain three life points\n");
+        
+        char *trail =
+			"GGE.... SGE.... HGE.... MGE.... DC?.V.. "
+			"GGE.... SGE.... HGE.... MGE.... DSTT... "
+			"GGE.... SGE.... HGE.... MGE.... DHIT... "
+			"GGE.... SGE.... HGE.... MGE.... DD1.... "
+			"GSTTTD. SGE.... HGE.... MGE.... DBU.... "
+			"GST.... SGE.... HGE.... MGE.... DCO.... ";
+		
+		Message messages[21] = {};
+		GameView gv = GvNew(trail, messages);
+		
+		assert(GvGetHealth(gv, PLAYER_LORD_GODALMING) == 7);
+		
+		printf("Test passed!\n");
+
+    }
+    
+    
 
     {///////////////////////////////////////////////////////////////////
     
@@ -550,7 +502,6 @@ int main(void)
         {
             printf("\tChecking Ionian Sea boat connections "
                    "(Lord Godalming, Round 1)\n");
->>>>>>> 06cc1279e6d730d27037a98d5c1b0753fa43e5fb
             
             int numLocs = -1;
             PlaceId *locs = GvGetReachableByType(gv, PLAYER_LORD_GODALMING,
@@ -618,4 +569,5 @@ int main(void)
 
     return EXIT_SUCCESS;
 }
-    
+
+
