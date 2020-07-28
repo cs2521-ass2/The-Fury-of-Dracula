@@ -140,7 +140,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
     
    // printf("%d dest\n", dest);
    // printf("%d source\n", source);
-    
+    Round save = tmp_round;
     while (!isEmpty(bfs) && found == false) {
         PlaceId head = dequeue(bfs);
         //printf("%d\n", head);
@@ -151,6 +151,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
             current = Pred[current];
         }
         tmp_round += level;
+       // printf("level = %d round = %d\n",level, tmp_round);
         
         if (head == dest) {
             found = true;
@@ -165,6 +166,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
             }
             
         }
+        tmp_round = save;
     }
     if (found) {
         int count = 0;
