@@ -351,16 +351,16 @@ int main(void)
 			PlaceId *path = HvGetShortestPathTo(hv, PLAYER_DR_SEWARD,
 			                                    CASTLE_DRACULA, &pathLength);
 			assert(pathLength == 7);
-			for (int i = 0; i < 7; i++) {
-			    printf("%d  \n", path[i]);
-			}
-			printf("%d\n", SARAGOSSA);
-			printf("%d\n", MARSEILLES);
-			printf("%d\n", GENOA);
-			printf("%d\n", VENICE);
-			printf("%d\n", BUDAPEST);
-			printf("%d\n", GALATZ);
-			printf("%d\n", CASTLE_DRACULA);
+/*			for (int i = 0; i < 7; i++) {*/
+/*			    printf("%d  \n", path[i]);*/
+/*			}*/
+/*			printf("%d\n", SARAGOSSA);*/
+/*			printf("%d\n", MARSEILLES);*/
+/*			printf("%d\n", GENOA);*/
+/*			printf("%d\n", VENICE);*/
+/*			printf("%d\n", BUDAPEST);*/
+/*			printf("%d\n", GALATZ);*/
+/*			printf("%d\n", CASTLE_DRACULA);*/
 			assert(path[0] == SARAGOSSA);
 			assert(path[1] == MARSEILLES);
 			assert(path[2] == GENOA || path[2] == MILAN);

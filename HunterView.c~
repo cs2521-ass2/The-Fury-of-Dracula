@@ -146,7 +146,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
         //printf("%d\n", head);
         int level = 0;
         PlaceId current = head;
-        while (current != NOWHERE && current != source) {
+        while (current != source) {
             level++;
             current = Pred[current];
         }
@@ -179,11 +179,12 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
         *pathLength = count;
         PlaceId *path = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
         while (j >= 0 && i != source) {
-         //   printf("i = %d\n", i);
+            printf("i = %d\n", i);
             path[j] = i;
             i = Pred[i];
             j--;
         }
+        printf("i = %d\n", i);
         return path;
     } else {
        // printf("not found\n");
@@ -290,7 +291,6 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
     Round curr_round = HvGetRound(hv);
     Player curr_player = HvGetPlayer(hv);
 
-    printf("%d     %d\n", curr_round, curr_player);
     if (curr_loc == NOWHERE) {    
         *numReturnedLocs = 0;
         return NULL;

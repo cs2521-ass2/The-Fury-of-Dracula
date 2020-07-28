@@ -146,7 +146,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
         //printf("%d\n", head);
         int level = 0;
         PlaceId current = head;
-        while (current != NOWHERE && current != source) {
+        while (current != source) {
             level++;
             current = Pred[current];
         }
@@ -184,6 +184,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
             i = Pred[i];
             j--;
         }
+       // printf("i = %d\n", i);
         return path;
     } else {
        // printf("not found\n");
