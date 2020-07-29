@@ -127,6 +127,77 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
     PlaceId source = HvGetPlayerLocation(hv, hunter);
     Round tmp_round = HvGetRound(hv);
     int tmp_returnedLocs = 0;
+    bool found = false;
+    struct Queue* bfs = NewQueue(NUM_REAL_PLACES);
+    //array of predecessors.
+    PlaceId Pred[NUM_REAL_PLACES];
+    
+    for(int i = 0; i < NUM_REAL_PLACES; i++)
+        Pred[i] = NOWHERE;
+    
+    Pred[source] = source;
+    enqueue(bfs, source);
+    
+   // printf("%d dest\n", dest);
+   // printf("%d source\n", source);
+    Round save = tmp_round;
+    while (!isEmpty(bfs) && found == false) {
+        PlaceId head = dequeue(bfs);
+        //printf("%d\n", head);
+        int level = 0;
+        PlaceId current = head;
+        while (current != source) {
+            level++;
+            current = Pred[current];
+        }
+        tmp_round += level;
+       // printf("level = %d round = %d\n",level, tmp_round);
+        
+        if (head == dest) {
+            found = true;
+        } else {
+            PlaceId *to_enqueue = GvGetReachable(hv->gv, hunter, tmp_round,
+                head, &tmp_returnedLocs);
+            for (int i = 0; i < tmp_returnedLocs; i++){
+                if (Pred[to_enqueue[i]] == NOWHERE) {
+                    enqueue(bfs, to_enqueue[i]);
+                    Pred[to_enqueue[i]] = head;
+                }
+            }
+            
+        }
+        tmp_round = save;
+    }
+    if (found) {
+        int count = 0;
+        PlaceId i = dest;
+        while (i != NOWHERE && i != source) {
+            count++;
+            i = Pred[i];
+        }
+        
+        i = dest;
+        int j = count - 1;
+        *pathLength = count;
+        PlaceId *path = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+        while (j >= 0 && i != source) {
+         //   printf("i = %d\n", i);
+            path[j] = i;
+            i = Pred[i];
+            j--;
+        }
+       // printf("i = %d\n", i);
+        return path;
+    } else {
+       // printf("not found\n");
+        *pathLength = 0;
+        return NULL;
+    }
+    
+    
+   /* PlaceId source = HvGetPlayerLocation(hv, hunter);
+    Round tmp_round = HvGetRound(hv);
+    int tmp_returnedLocs = 0;
     //make new queue for places to visit
     struct Queue* ToVisit = NewQueue(MAX_REAL_PLACE);
     //initialise 2D array of visited paths.
@@ -169,7 +240,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
             tmp_round += 1;
         }
     }
-    return NULL;
+    return NULL; */
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -191,23 +262,24 @@ PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
 PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
                           int *numReturnedLocs)
 {
-   PlaceId curr_loc = GvGetPlayerLocation(hv->gv, player);
+    PlaceId curr_loc = GvGetPlayerLocation(hv->gv, player);
     Round curr_round = HvGetRound(hv);
+    Player curr_player = HvGetPlayer(hv);
 
-    if (curr_round < 1 || curr_loc == NOWHERE) {    
+    if (curr_loc == NOWHERE) {    
         *numReturnedLocs = 0;
         return NULL;
     }
 
     if (player == PLAYER_DRACULA) {
-        if (GvGetPlayerLocation (hv->gv, player) == CITY_UNKNOWN ||
-            GvGetPlayerLocation (hv->gv, player) == SEA_UNKNOWN) {
+        if (curr_loc == CITY_UNKNOWN || curr_loc == SEA_UNKNOWN) {
             *numReturnedLocs = 0;
             return NULL;
-        } else {
-            curr_round += 1;        
-        }
+        } 
     }   
+    
+    if (player < curr_player)
+         curr_round += 1;   
 
     PlaceId *place = GvGetReachable(hv->gv, player, curr_round, curr_loc, numReturnedLocs);
     return place;
@@ -219,23 +291,25 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 {   
     PlaceId curr_loc = GvGetPlayerLocation(hv->gv, player);
     Round curr_round = HvGetRound(hv);
+    Player curr_player = HvGetPlayer(hv);
 
-    if (curr_round < 1 || curr_loc == NOWHERE) {    
+    if (curr_loc == NOWHERE) {    
         *numReturnedLocs = 0;
         return NULL;
     }
+
     if (player == PLAYER_DRACULA) {
-        if (GvGetPlayerLocation (hv->gv, player) == CITY_UNKNOWN ||
-            GvGetPlayerLocation (hv->gv, player) == SEA_UNKNOWN) {
+        if (curr_loc == CITY_UNKNOWN || curr_loc == SEA_UNKNOWN) {
             *numReturnedLocs = 0;
             return NULL;
-        } else {
-            curr_round += 1;
-        }       
-    }        
+        } 
+    }   
+    
+    if (player < curr_player)
+         curr_round += 1;      
 
-    PlaceId *place = GvGetReachableByType(hv->gv, player, curr_round, 
-                    road, rail, boat, curr_loc, numReturnedLocs);
+    PlaceId *place = GvGetReachableByType(hv->gv, player, curr_round, curr_loc,
+                    road, rail, boat, numReturnedLocs);
     return place;
 }
 

@@ -74,7 +74,7 @@ void decideHunterMove(HunterView hv)
         int pathLength;
         if (round - draLastRound < 6) {
             // Shortest Path
-            PlaceId *shortestPath = HvGetShortestPathTo(hv, currPlayer, LastKnown,
+            HvGetShortestPathTo(hv, currPlayer, LastKnown,
                              &pathLength);
             HvGetPlayerLocation(hv, currPlayer);
             
