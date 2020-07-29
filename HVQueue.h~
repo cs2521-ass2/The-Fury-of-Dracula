@@ -27,4 +27,4 @@ PlaceId dequeue(struct Queue* queue);
 int isNotInQueue (struct Queue* queue, PlaceId p);
 
 // drop the queue
-void dropHunterQueue(struct Queue* queue);
+void dropQueue(struct Queue* queue);

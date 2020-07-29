@@ -1,7 +1,7 @@
 #include <stdio.h> 
 #include <stdlib.h> 
 
-#include "Queue.h"
+#include "HVQueue.h"
 #include "Places.h"
 
 ////////////////////////////
@@ -18,7 +18,7 @@ struct Queue* NewQueue(int capacity) {
     struct Queue* ToVisit = malloc(sizeof(struct Queue));
     ToVisit->capacity = capacity;
     ToVisit->front = ToVisit->size = 0;
-    ToVisit->rear = capacity - 1;
+    ToVisit->rear = 0;
     ToVisit->array = malloc(ToVisit->capacity * sizeof(PlaceId));
     return ToVisit; 
 }
@@ -42,15 +42,15 @@ void enqueue(struct Queue* queue, PlaceId p)
 {
     if (isFull(queue))
         return;
-    queue->rear = queue->rear + 1;
     queue->array[queue->rear] = p;
+    queue->rear = queue->rear + 1;
     queue->size = queue->size + 1;
 
 }
 
 // Function to remove an item from queue.
 // It changes front and size
-int dequeue(struct Queue* queue)
+PlaceId dequeue(struct Queue* queue)
 {
     PlaceId to_leave = queue->array[queue->front];
     queue->front = queue->front + 1;
@@ -70,6 +70,13 @@ int isNotInQueue (struct Queue* queue, PlaceId p)
     return 1;
 }
     
+
+// drop the queue
+void dropQueue(struct Queue* queue) {
+    free(queue->array);
+    free(queue);
+}
+
 
 
 

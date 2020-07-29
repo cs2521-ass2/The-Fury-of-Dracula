@@ -71,5 +71,12 @@ int isNotInQueue (struct Queue* queue, PlaceId p)
 }
     
 
+// drop the queue
+void dropHunterQueue(struct Queue* queue) {
+    free(queue->array);
+    free(queue);
+}
+
+
 
 
