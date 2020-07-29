@@ -128,119 +128,71 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
     Round tmp_round = HvGetRound(hv);
     int tmp_returnedLocs = 0;
     bool found = false;
-    struct Queue* bfs = NewQueue(NUM_REAL_PLACES);
-    //array of predecessors.
-    PlaceId Pred[NUM_REAL_PLACES];
     
+    // use bfs to tranverse the graph
+    struct Queue* bfs = NewQueue(NUM_REAL_PLACES);
+    // array of predecessors.
+    PlaceId Pred[NUM_REAL_PLACES]; 
     for(int i = 0; i < NUM_REAL_PLACES; i++)
         Pred[i] = NOWHERE;
     
     Pred[source] = source;
     enqueue(bfs, source);
-    
-   // printf("%d dest\n", dest);
-   // printf("%d source\n", source);
+    // save the round of the source node
     Round save = tmp_round;
     while (!isEmpty(bfs) && found == false) {
         PlaceId head = dequeue(bfs);
-        //printf("%d\n", head);
+        // level means the pathlength from the head to the source
         int level = 0;
         PlaceId current = head;
         while (current != source) {
             level++;
             current = Pred[current];
         }
-        tmp_round += level;
-       // printf("level = %d round = %d\n",level, tmp_round);
-        
+        tmp_round += level;     
         if (head == dest) {
             found = true;
         } else {
+            // all the reachable locations
             PlaceId *to_enqueue = GvGetReachable(hv->gv, hunter, tmp_round,
                 head, &tmp_returnedLocs);
             for (int i = 0; i < tmp_returnedLocs; i++){
                 if (Pred[to_enqueue[i]] == NOWHERE) {
+                    // add to the queue and link
                     enqueue(bfs, to_enqueue[i]);
                     Pred[to_enqueue[i]] = head;
                 }
             }
-            
+            free(to_enqueue);
         }
         tmp_round = save;
     }
+    dropHunterQueue(bfs);
+    
     if (found) {
+        // calculate the pathLength
         int count = 0;
         PlaceId i = dest;
         while (i != NOWHERE && i != source) {
             count++;
             i = Pred[i];
-        }
-        
+        }  
         i = dest;
         int j = count - 1;
         *pathLength = count;
+        // store the shortest path
         PlaceId *path = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
         while (j >= 0 && i != source) {
-         //   printf("i = %d\n", i);
             path[j] = i;
             i = Pred[i];
             j--;
         }
-       // printf("i = %d\n", i);
         return path;
     } else {
-       // printf("not found\n");
+        // not found
         *pathLength = 0;
         return NULL;
     }
-    
-    
-   /* PlaceId source = HvGetPlayerLocation(hv, hunter);
-    Round tmp_round = HvGetRound(hv);
-    int tmp_returnedLocs = 0;
-    //make new queue for places to visit
-    struct Queue* ToVisit = NewQueue(MAX_REAL_PLACE);
-    //initialise 2D array of visited paths.
-    //set all to -3 since it is not an existing PlaceId.
-   // PlaceId PathsVisited[MAX_REAL_PLACE][MAX_REAL_PLACE];    
-    
-    PlaceId **PathsVisited = malloc((MAX_REAL_PLACE + 1) * sizeof(PlaceId *)); 
-    for (int i = 0; i <= MAX_REAL_PLACE; i++)
-        PathsVisited[i] = malloc((MAX_REAL_PLACE + 1) * sizeof(PlaceId));
-    for (int i=0;i <=MAX_REAL_PLACE; i++){
-        for(int j=0; j<=MAX_REAL_PLACE; j++){
-            PathsVisited[i][j] = NOWHERE;
-        }
-    }  
-    PathsVisited[source][0] = source;
-    enqueue(ToVisit, source);
-    //while there is still places to visit, 
-    //repeatedly call gvgetreachable to enqueue. 
-    //if the destination is found, return its path.
-    while (!isEmpty(ToVisit)) {
-        PlaceId tmp_loc = dequeue(ToVisit);
-        if (tmp_loc == dest) {
-            for (int i = 0; i <= MAX_REAL_PLACE && PathsVisited[tmp_loc][i] != NOWHERE ; i++) {
-                *pathLength = i + 1;
-            }
-            return PathsVisited[tmp_loc];
-        }
-        PlaceId *to_enqueue = GvGetReachable(hv->gv, hunter, tmp_round, 
-                              tmp_loc, &tmp_returnedLocs);
-      for(int i = 0; i < tmp_returnedLocs; i++) {
-            int QueueCheck = isNotInQueue(ToVisit, to_enqueue[i]);
-            if (QueueCheck == 1) {
-                enqueue(ToVisit, to_enqueue[i]);
-                //Copy the path of tmp_loc into path to to_enqueue[i]  
-                int j = 0;
-                for (; PathsVisited[tmp_loc][j] <= MAX_REAL_PLACE &&  PathsVisited[tmp_loc][j] >= MIN_REAL_PLACE ; j++) 
-                    PathsVisited[to_enqueue[i]][j] = PathsVisited[tmp_loc][j];
-                PathsVisited[to_enqueue[i]][j+1] = to_enqueue[i];       
-            }
-            tmp_round += 1;
-        }
-    }
-    return NULL; */
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -265,19 +217,19 @@ PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
     PlaceId curr_loc = GvGetPlayerLocation(hv->gv, player);
     Round curr_round = HvGetRound(hv);
     Player curr_player = HvGetPlayer(hv);
-
+    // Hasn't made a move
     if (curr_loc == NOWHERE) {    
         *numReturnedLocs = 0;
         return NULL;
     }
-
+    // place not revealed
     if (player == PLAYER_DRACULA) {
         if (curr_loc == CITY_UNKNOWN || curr_loc == SEA_UNKNOWN) {
             *numReturnedLocs = 0;
             return NULL;
         } 
     }   
-    
+    // next move
     if (player < curr_player)
          curr_round += 1;   
 
@@ -292,19 +244,19 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
     PlaceId curr_loc = GvGetPlayerLocation(hv->gv, player);
     Round curr_round = HvGetRound(hv);
     Player curr_player = HvGetPlayer(hv);
-
+    // Hasn't made a move
     if (curr_loc == NOWHERE) {    
         *numReturnedLocs = 0;
         return NULL;
     }
-
+    // place not revealed
     if (player == PLAYER_DRACULA) {
         if (curr_loc == CITY_UNKNOWN || curr_loc == SEA_UNKNOWN) {
             *numReturnedLocs = 0;
             return NULL;
         } 
     }   
-    
+    // next move
     if (player < curr_player)
          curr_round += 1;      
 

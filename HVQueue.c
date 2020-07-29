@@ -1,7 +1,7 @@
 #include <stdio.h> 
 #include <stdlib.h> 
 
-#include "Queue.h"
+#include "HVQueue.h"
 #include "Places.h"
 
 ////////////////////////////
@@ -70,6 +70,13 @@ int isNotInQueue (struct Queue* queue, PlaceId p)
     return 1;
 }
     
+
+// drop the queue
+void dropHunterQueue(struct Queue* queue) {
+    free(queue->array);
+    free(queue);
+}
+
 
 
 
