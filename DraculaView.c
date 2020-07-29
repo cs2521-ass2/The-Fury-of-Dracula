@@ -13,17 +13,12 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "DraculaView.h"
 #include "Game.h"
 #include "GameView.h"
 #include "Map.h"
-// add your own #includes here
-
-// TODO: ADD YOUR OWN STRUCTS HERE
 
 struct draculaView {
-    // TODO: ADD FIELDS HERE
     GameView gv;
 };
 
@@ -32,7 +27,6 @@ struct draculaView {
 
 DraculaView DvNew(char *pastPlays, Message messages[])
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     DraculaView new = malloc(sizeof(*new));
     if (new == NULL) {
         fprintf(stderr, "Couldn't allocate DraculaView\n");
@@ -44,7 +38,6 @@ DraculaView DvNew(char *pastPlays, Message messages[])
 
 void DvFree(DraculaView dv)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     GvFree(dv->gv);
     free(dv);
 }
@@ -54,37 +47,31 @@ void DvFree(DraculaView dv)
 
 Round DvGetRound(DraculaView dv)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     return GvGetRound(dv->gv);
 }
 
 int DvGetScore(DraculaView dv)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     return GvGetScore(dv->gv);
 }
 
 int DvGetHealth(DraculaView dv, Player player)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     return GvGetHealth(dv->gv, player);
 }
 
 PlaceId DvGetPlayerLocation(DraculaView dv, Player player)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     return GvGetPlayerLocation(dv->gv, player);
 }
 
 PlaceId DvGetVampireLocation(DraculaView dv)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     return GvGetVampireLocation(dv->gv);
 }
 
 PlaceId *DvGetTrapLocations(DraculaView dv, int *numTraps)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     return GvGetTrapLocations(dv->gv, numTraps);
 }
 
@@ -93,8 +80,6 @@ PlaceId *DvGetTrapLocations(DraculaView dv, int *numTraps)
 
 PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-
     PlaceId current_place = DvGetPlayerLocation(dv, PLAYER_DRACULA);
     Round current_round = DvGetRound(dv);
     
@@ -251,14 +236,12 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 
 PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     return DvWhereCanTheyGo(dv, PLAYER_DRACULA, numReturnedLocs);
 }
 
 PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
                              int *numReturnedLocs)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     return DvWhereCanTheyGoByType(dv, PLAYER_DRACULA, road, false, boat,
         numReturnedLocs);
 }
@@ -266,8 +249,6 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
 PlaceId *DvWhereCanTheyGo(DraculaView dv, Player player,
                           int *numReturnedLocs)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-
     PlaceId current_place = DvGetPlayerLocation(dv, player);
     Round current_round = DvGetRound(dv);
     // Hasn't made a move
@@ -317,7 +298,6 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     PlaceId current_place = DvGetPlayerLocation(dv, player);
     Round current_round = DvGetRound(dv);
     // Hasn't made a move
@@ -363,7 +343,3 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
     return place;
 }
 
-////////////////////////////////////////////////////////////////////////
-// Your own interface functions
-
-// TODO
