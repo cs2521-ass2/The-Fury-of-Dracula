@@ -20,9 +20,7 @@
 #include "Places.h"
 #include "testUtils.h"
 
-#define NUM_HUNTERS  4
-#define IN_HOSPITAL  1
-#define OUT_HOSPITAL 0
+#define NUM_HUNTERS 4
 
 typedef int Item;
 typedef struct QueueRep *Queue;
@@ -43,7 +41,7 @@ struct QueueRep {
 
 struct gameView {
 
-	int player_hp[5];    // player_hp[0] = LG's health point
+    int player_hp[5];    // player_hp[0] = LG's health point
 					     // player_hp[1] = DS's health point
 					     // player_hp[2] = VH's health point
 					     // player_hp[3] = MH's health point
@@ -52,7 +50,7 @@ struct gameView {
 	Round round;         // Which round it is
 	int city_with_vam;   // the city ID with unmatured vampire, if not, set value = -1
 	int *trapLocations;  // int array of trap locations
-	                     // array of cities with may include traps;if empty, set value = -1
+	                     //array of cities with may include traps;if empty, set value = -1
 	int score;           // score of game
 	int inhospital[4];   // dracula cannot be in hosptial.not in hosptial is 0, in hosptial = 1 (0 1 2 3)
 	int **past_route;    // store the past route for each player
@@ -87,7 +85,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	// Initialise each player's life points
 	i = 0;
 	while (i < NUM_HUNTERS) {
-	    new->player_hp[i] = GAME_START_HUNTER_LIFE_POINTS;
+        new->player_hp[i] = GAME_START_HUNTER_LIFE_POINTS;
 	    i++;
 	}
 	new->player_hp[i] = GAME_START_BLOOD_POINTS;
@@ -155,10 +153,10 @@ GameView GvNew(char *pastPlays, Message messages[])
 	    int is_DOUBLE_BACK_HIDE = 0;
 	    
 	    // If the hunter is in hospital, regain their full life points
-	    for (i = 0; i < NUM_HUNTERS; i++) {
-	        if (new->inhospital[i] == IN_HOSPITAL) {
+	    for (i = 0; i < 4; i++) {
+	        if (new->inhospital[i] == 1) {
 	            new->player_hp[i] = GAME_START_HUNTER_LIFE_POINTS;
-	            new->inhospital[i] = OUT_HOSPITAL;
+	            new->inhospital[i] = 0;
             }
 	    }
 	    
@@ -227,7 +225,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 			
 			// Increase dracula's life point by 10
 		    if (placeID == CASTLE_DRACULA) {
-		        new->player_hp[playerIndex] += LIFE_GAIN_CASTLE_DRACULA;
+		        new->player_hp[playerIndex] += 10;
 	        }
 		}
 		
@@ -251,9 +249,9 @@ GameView GvNew(char *pastPlays, Message messages[])
 		    // If a hunter decides to rest, he can gain three life points
 		    if (new->round >= 1 
 		        && placeID == new->past_route[playerIndex][new->round]) {
-		        new->player_hp[playerIndex] += LIFE_GAIN_REST;
-		        if (new->player_hp[playerIndex] > GAME_START_HUNTER_LIFE_POINTS) {
-		            new->player_hp[playerIndex] = GAME_START_HUNTER_LIFE_POINTS;
+		        new->player_hp[playerIndex] += 3;
+		        if (new->player_hp[playerIndex] > 9) {
+		            new->player_hp[playerIndex] = 9;
 		        }
 		    }   
 		
@@ -267,7 +265,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 			}
 
 
-			if (new->inhospital[playerIndex] == OUT_HOSPITAL && step[4] == 'T') {
+			if (new->inhospital[playerIndex] == 0 && step[4] == 'T') {
 			    trapEncountered(new, placeID, playerIndex);
 			} else if (new->inhospital[playerIndex] == 0 && step[4] == 'V') {
 				new->city_with_vam = NOWHERE;
@@ -276,7 +274,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 			}
 			
 			
-			if (new->inhospital[playerIndex] == OUT_HOSPITAL && step[5] == 'T') {
+			if (new->inhospital[playerIndex] == 0 && step[5] == 'T') {
 			    trapEncountered(new, placeID, playerIndex);
 			} else if (new->inhospital[playerIndex] == 0 && step[5] == 'V') {
 				new->city_with_vam = NOWHERE;
@@ -284,7 +282,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 			    draculaEncounter(new, playerIndex);
 			}
 			
-			if (new->inhospital[playerIndex] == OUT_HOSPITAL && step[6] == 'D') {
+			if (new->inhospital[playerIndex] == 0 && step[6] == 'D') {
 			    draculaEncounter(new, playerIndex);
 			}
 			
@@ -303,7 +301,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 		    
 			// If a trap left the trail
 			int index = 1;
-			while (index < TRAIL_SIZE) {
+			while (index < 6) {
 				new->trapLocations[index - 1] = new->trapLocations[index];
 				index++;
 			}
@@ -322,7 +320,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 			// If a vampire matures
 			if (step[5] == 'V') {
 				new->city_with_vam = NOWHERE;
-				new->score -= SCORE_LOSS_VAMPIRE_MATURES;
+				new->score -= 13;
 			}
 
 			new->score--;
@@ -330,7 +328,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 
         // Extract next turn
 	    step = strtok(NULL, " ");
-	    new->round = new->turn / NUM_PLAYERS;
+	    new->round = new->turn / 5;
 	}
     
 	return new;
@@ -366,8 +364,18 @@ Round GvGetRound(GameView gv)
 
 Player GvGetPlayer(GameView gv)
 {
-	int value = gv->turn % NUM_PLAYERS;
-	return value;
+	int value = gv->turn % 5;
+	if (value == 0) {
+	    return PLAYER_LORD_GODALMING;
+	} else if (value == 1) {
+	    return PLAYER_DR_SEWARD;
+	} else if (value == 2) {
+	    return PLAYER_VAN_HELSING;
+	} else if (value == 3) {
+	    return PLAYER_MINA_HARKER;
+	} else {
+	    return PLAYER_DRACULA;
+	}	
 }
 
 int GvGetScore(GameView gv)
@@ -395,7 +403,7 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
     // Get the number of traps in the rail
 	int j = 0;
-	for (int i = 0; i < TRAIL_SIZE; i++) {
+	for (int i = 0; i < 6;i++) {
 	    if (gv->trapLocations[i] != NOWHERE) {
 	        j++;
 	    }
@@ -405,9 +413,9 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 	
 	// Put the placeId where there is a trap into an array
 	// The array traps should be freed manually
-	PlaceId *traps = malloc(TRAIL_SIZE * sizeof(int));
+	PlaceId *traps = malloc(6 * sizeof(int));
 	j = 0;
-	for (int i = 0; i < TRAIL_SIZE; i++) {
+	for (int i = 0; i < 6;i++) {
 	    if (gv->trapLocations[i] != NOWHERE) {
 	        traps[j] = gv->trapLocations[i];
 	        j++;
@@ -435,7 +443,7 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
                         int *numReturnedMoves, bool *canFree)
 {
 	int i = 0;
-	PlaceId *LastMoves = malloc(numMoves * sizeof(PlaceId));
+	PlaceId *array = malloc(numMoves * sizeof(PlaceId));
 	while (gv->past_route[player][i] != NOWHERE) {
 	    i++;
 	}
@@ -446,12 +454,12 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 	// is less than the number of moves the player has made so far.
 	if (numMoves <= i + 1) {
 	
-	    *numReturnedMoves = numMoves;
-	    while (numMoves > 0) {
-	        LastMoves[counter] = gv->past_route[player][i + 1 - numMoves];
-	        numMoves--;
+	    while (counter < numMoves) {
+	        array[counter] = gv->past_route[player][i];
+	        i--;
 	        counter++;
 	    }
+	    *numReturnedMoves = numMoves;
 	    *canFree = true;
 	    
 	} else {
@@ -459,11 +467,11 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 	    *numReturnedMoves = i;
 	    *canFree = false;
 	    
-	    LastMoves = GvGetMoveHistory(gv, player,numReturnedMoves, canFree);
-	    return LastMoves;
+	    array = GvGetMoveHistory(gv, player,numReturnedMoves, canFree);
+	    return array;
     } 
 	
-	return LastMoves;
+	return array;
 }
 
 PlaceId *GvGetLocationHistory(GameView gv, Player player,
@@ -497,15 +505,15 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 	    // is greater than the number of locations the player has made so far.
 	    if (numLocs > i) {
 	        numLocs = i;
+	        *canFree = false;
 	        return GvGetLocationHistory(gv, player, numReturnedLocs, canFree);
 	    }
 	    
 	    // Store the placeId into a new array
         PlaceId *draculaLastLocs = malloc(sizeof(PlaceId) * i);
         int counter = 0;
-        while (numLocs > 0) {
-            draculaLastLocs[counter] = gv->trail[i - numLocs];
-            numLocs--;
+        while (counter < numLocs) {
+            draculaLastLocs[counter] = gv->trail[i - 1 - counter];
             counter++;
         }
         *canFree = true;
@@ -523,19 +531,19 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 	    // is greater than the number of locations the player has made so far.
 	    if (numLocs > i) {
 	        numLocs = i;
+	        *canFree = false;
 	        return GvGetLocationHistory(gv, player, numReturnedLocs, canFree);
 	    }
 	    
 	    // Store the placeId into a new array
         PlaceId *hunterLastLocs = malloc(sizeof(PlaceId) * i);
         int counter = 0;
-        while (numLocs > 0) {
-            hunterLastLocs[counter] = gv->past_route[player][i - numLocs];
-            numLocs--;
+        while (counter < numLocs) {
+            hunterLastLocs[counter] = gv->past_route[player][i - 1 - counter];
             counter++;
         }
-        
-        *canFree = true;
+        // not sure
+        *canFree = false;
         *numReturnedLocs = counter;
 	    return hunterLastLocs;
 	}
@@ -553,14 +561,14 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 	int railLength = (round + player) % 4;
 	
 	// Allocate enough space
-	PlaceId *reachable = malloc(sizeof(PlaceId) * NUM_REAL_PLACES);
+	PlaceId *reachable = malloc(sizeof(PlaceId) * 1024);
 	int i;
 	int counter = 0;
 	
 	// Initialise reachable to NOWHERE
-	for (i = 0; i < NUM_REAL_PLACES; i++) reachable[i] = NOWHERE;
+	for (i = 0; i < 1024; i++) reachable[i] = NOWHERE;
 	
-    // Reachable by hunters by rail
+    // Reachable by rail
 	if (player != PLAYER_DRACULA) {
 	
         Queue place = createQueue();
@@ -584,14 +592,12 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                     i++;
                 }
                 
-                // If not duplicate, store it in reachable array
                 if (railcheck < 0 || dup == 1) {
                     continue;
                 }
                 reachable[counter] = fromplace;
                 counter++;
                 
-                // Add surrounding places to the queue
                 ConnList curr = MapGetConnections(new, fromplace);
                 while (curr != NULL) {
                     if (curr->type == RAIL) {
@@ -607,7 +613,6 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
         dropQueue(index);
     }
     
-    // Reachable by road
     ConnList curr = MapGetConnections(new, from);
     while (curr != NULL) {
         if (curr->type == ROAD) {
@@ -638,7 +643,6 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
     }
         
    
-    // Reachable by boat
     curr = MapGetConnections(new, from);
     while (curr != NULL) {
         if (curr->type == BOAT) {
@@ -649,7 +653,6 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
     }
     
     
-    // Add the current place into reachable array
 	i = 0;
 	int currPlaceIncl = 0;
 	while (i < counter) {
@@ -665,6 +668,7 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 	*numReturnedLocs = counter;
 	return reachable;
 	
+	return 0;
 }
 
 PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
@@ -676,16 +680,14 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 	ConnList head = MapGetConnections(new, from);
 	int railLength = (round + player) % 4;
 	
-	// Allocate enough space
-	PlaceId *reachable = malloc(sizeof(PlaceId) * NUM_REAL_PLACES);
+	PlaceId *reachable = malloc(sizeof(PlaceId) * 1024);
 	int i;
 	int counter = 0;
 	
-	// Initialise the reachable array to NOWHERE
-	for (i = 0; i < NUM_REAL_PLACES; i++) reachable[i] = NOWHERE;
+	for (i = 0; i < 1024; i++) reachable[i] = NOWHERE;
 	
 	
-    // If the player is a hunter and go by rail
+
 	if (player != PLAYER_DRACULA && rail == true) {
         Queue place = createQueue();
         Queue index = createQueue();
@@ -696,7 +698,6 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                 PlaceId fromplace = leaveQueue(place);
                 PlaceId railcheck = leaveQueue(index);
                 
-                // Check duplicates
                 int dup = 0;
                 i = 0;
                 while (reachable[i] != NOWHERE) {
@@ -713,7 +714,6 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                 reachable[counter] = fromplace;
                 counter++;
                 
-                // Add surrounding places into the array
                 for (ConnList curr = MapGetConnections(new, fromplace); curr != NULL; curr = curr->next) {
                     if (curr->type == RAIL) {
                         enterQueue(place, curr->p);
@@ -726,8 +726,6 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
         dropQueue(place);
         dropQueue(index);
     }
-    
-    
     
     if (road == true) {
         ConnList curr = head;
@@ -770,8 +768,7 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
     }
     
     
-<<<<<<< HEAD
-    // Add the current place into the reachable array
+    
 	i = 0;
 	int currPlaceIncl = 0;
 	while (i < counter) {
@@ -783,28 +780,6 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 	if (currPlaceIncl == 0) {
 	    reachable[counter] = from;
 	    counter++;    
-=======
-    
-    {///////////////////////////////////////////////////////////////////
-    
-        printf("Testing if a hunter regain three life points\n");
-        
-        char *trail =
-            "GGE.... SGE.... HGE.... MGE.... DC?.V.. "
-            "GGE.... SGE.... HGE.... MGE.... DSTT... "
-            "GGE.... SGE.... HGE.... MGE.... DHIT... "
-            "GGE.... SGE.... HGE.... MGE.... DD1.... "
-            "GSTTTD. SGE.... HGE.... MGE.... DBU.... "
-            "GST.... SGE.... HGE.... MGE.... DCO.... ";
-        
-        Message messages[21] = {};
-        GameView gv = GvNew(trail, messages);
-        
-        assert(GvGetHealth(gv, PLAYER_LORD_GODALMING) == 7);
-        
-        printf("Test passed!\n");
-
->>>>>>> 29e3074c9113d770c88def8f3a2162ea70c8238d
     }
 	*numReturnedLocs = counter;
 	return reachable;
@@ -913,5 +888,6 @@ Item leaveQueue (Queue q)
 	free(delNode);
 	return it;
 }
+
 
 

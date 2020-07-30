@@ -40,8 +40,8 @@ int main(void)
         assert(HvGetHealth(hv, PLAYER_DRACULA) == GAME_START_BLOOD_POINTS);
         assert(HvGetVampireLocation(hv) == NOWHERE);
 
-        printf("Test passed\n");
         HvFree(hv);
+        printf("Test passed\n");
     }
 
     {///////////////////////////////////////////////////////////////////
@@ -60,8 +60,8 @@ int main(void)
         assert(HvGetPlayerLocation(hv, PLAYER_LORD_GODALMING) == STRASBOURG);
         assert(HvGetPlayerLocation(hv, PLAYER_DR_SEWARD) == NOWHERE);
 
-        printf("Test passed!\n");
         HvFree(hv);
+        printf("Test passed!\n");
     }
     
     {///////////////////////////////////////////////////////////////////
@@ -231,7 +231,7 @@ int main(void)
         Message messages[18] = {};
         HunterView hv = HvNew(trail, messages);
         
-        assert(HvGetPlayerLocation(hv, PLAYER_DRACULA) ==  CITY_UNKNOWN);
+        assert(HvGetPlayerLocation(hv, PLAYER_DRACULA) == CITY_UNKNOWN);
         assert(HvGetVampireLocation(hv) == CASTLE_DRACULA);
         
         HvFree(hv);
@@ -287,6 +287,54 @@ int main(void)
         printf("Test passed!\n");
     }
 
+    {///////////////////////////////////////////////////////////////////
+
+        printf("Testing Dracula's last known location 2 (moving to city preoccupied by hunter \n");
+        
+        char *trail = 
+            "GGE.... SGE.... HVI.... MGE.... DC?.V.. "
+            "GGE.... SZU.... HBD.... MZU.... DC?T... "
+            "GST.... SMU.... HBD.... MST.... DMUT... "
+            "GFR.... SNU.... HBD.... MST.... DC?T... ";
+            
+        Message messages[15] = {};
+        HunterView hv = HvNew(trail, messages);
+        
+        assert(HvGetPlayerLocation(hv, PLAYER_DRACULA) == CITY_UNKNOWN);
+        Round round = -1;
+        assert(HvGetLastKnownDraculaLocation(hv, &round) == MUNICH);
+        assert(round == 2);
+        
+        HvFree(hv);
+        printf("Test passed!\n");           
+            
+    }
+    
+     {///////////////////////////////////////////////////////////////////
+
+        printf("Testing Dracula's last known location 3 (hunter research) \n");
+        
+        char *trail = 
+            "GGE.... SGE.... HGE.... MGE.... DC?.V.. "
+            "GPA.... SPA.... HPA.... MPA.... DBDT... "
+            "GBU.... SBU.... HBU.... MBU.... DC?T... "
+            "GCO.... SCO.... HCO.... MCO.... DC?T... "
+            "GLI.... SLI.... HLI.... MLI.... DC?T... "
+            "GNU.... SNU.... HNU.... MNU.... DC?T... "
+            "GNU.... SNU.... HNU.... MNU.... DC?.V.. ";
+            
+        Message messages[15] = {};
+        HunterView hv = HvNew(trail, messages);
+        
+        assert(HvGetPlayerLocation(hv, PLAYER_DRACULA) == CITY_UNKNOWN);
+        Round round = -1;
+        assert(HvGetLastKnownDraculaLocation(hv, &round) == BUDAPEST);
+        assert(round == 1);
+        HvFree(hv);
+        printf("Test passed!\n");           
+            
+    } 
+    
     {///////////////////////////////////////////////////////////////////
         
         printf("Testing shortest path 1\n");
@@ -366,6 +414,67 @@ int main(void)
     }
     
     {///////////////////////////////////////////////////////////////////
+        
+        printf("Testing shortest path 2\n");
+        
+        char *trail =
+            "GCG.... SBD.... HNS.... MMI.... DCD.V.."; //round 0
+        
+        Message messages[5] = {};
+        HunterView hv = HvNew(trail, messages);
+        
+        {
+            printf("\tCagliari -> Le Havre (Lord Godalming, Round 1)\n");
+            int pathLength = -1;
+            PlaceId *path = HvGetShortestPathTo(hv, PLAYER_LORD_GODALMING,
+                                                LE_HAVRE, &pathLength);
+            assert(pathLength == 3);
+            assert(path[0] == MEDITERRANEAN_SEA);
+            assert(path[1] == MARSEILLES);
+            assert(path[2] == LE_HAVRE);
+            free(path);
+        }                
+        
+        {
+            printf("\tNorth Sea -> Geneva (Van Helsing, Round 1)\n");
+            int pathLength = -1;
+            PlaceId *path = HvGetShortestPathTo(hv, PLAYER_VAN_HELSING,
+                                                GENEVA, &pathLength);
+            assert(pathLength == 4);
+            assert(path[0] == HAMBURG || path[0] == AMSTERDAM);
+            assert(path[1] == FRANKFURT || path[1] == NUREMBURG 
+                           || path[1] == COLOGNE || path[1] == BRUSSELS);
+            assert(path[2] == STRASBOURG || path[2] == PARIS);
+            assert(path[3] == GENEVA);
+            free(path);
+        }
+        
+        {
+            printf("\tMilan -> Paris (Mina Harker, Round 1)\n");
+            int pathLength = -1;
+            PlaceId *path = HvGetShortestPathTo(hv, PLAYER_MINA_HARKER,
+                                                PARIS, &pathLength);
+            assert(pathLength == 2);
+            assert(path[0] == MARSEILLES);
+            assert(path[1] == PARIS);
+            free(path);
+        }
+        
+        {
+            printf("\tBudapest -> Bucharest (Dr. Seward, Round 1)\n");
+            int pathLength = -1;
+            PlaceId *path = HvGetShortestPathTo(hv, PLAYER_DR_SEWARD,
+                                                BUCHAREST, &pathLength);
+            assert(pathLength == 1);
+            assert(path[0] == BUCHAREST);
+            free(path);
+        }
+        
+        HvFree(hv);
+        printf("Test passed!\n");
+    }
+    
+    {///////////////////////////////////////////////////////////////////
     
         printf("Checking Galatz road connections "
                "(Lord Godalming, Round 1)\n");
@@ -377,7 +486,6 @@ int main(void)
         int numLocs = -1;
         PlaceId *locs = HvWhereCanTheyGoByType(hv, PLAYER_LORD_GODALMING,
                                                true, false, false, &numLocs);
-        
         assert(numLocs == 5);
         sortPlaces(locs, numLocs);
         assert(locs[0] == BUCHAREST);
@@ -430,11 +538,12 @@ int main(void)
         PlaceId *locs = HvWhereCanTheyGoByType(hv, PLAYER_LORD_GODALMING,
                                                false, false, true, &numLocs);
         
-        assert(numLocs == 3);
+        assert(numLocs == 4);
         sortPlaces(locs, numLocs);
         assert(locs[0] == ADRIATIC_SEA);
         assert(locs[1] == BARI);
-        assert(locs[2] == VENICE);
+        assert(locs[2] == IONIAN_SEA);
+        assert(locs[3] == VENICE);
         free(locs);
         
         HvFree(hv);

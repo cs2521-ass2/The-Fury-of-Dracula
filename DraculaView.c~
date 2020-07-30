@@ -1,3 +1,4 @@
+
 ////////////////////////////////////////////////////////////////////////
 // COMP2521 20T2 ... the Fury of Dracula
 // DraculaView.c: the DraculaView ADT implementation
@@ -13,17 +14,12 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "DraculaView.h"
 #include "Game.h"
 #include "GameView.h"
 #include "Map.h"
-// add your own #includes here
-
-// TODO: ADD YOUR OWN STRUCTS HERE
 
 struct draculaView {
-    // TODO: ADD FIELDS HERE
     GameView gv;
 };
 
@@ -32,7 +28,6 @@ struct draculaView {
 
 DraculaView DvNew(char *pastPlays, Message messages[])
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     DraculaView new = malloc(sizeof(*new));
     if (new == NULL) {
         fprintf(stderr, "Couldn't allocate DraculaView\n");
@@ -44,7 +39,6 @@ DraculaView DvNew(char *pastPlays, Message messages[])
 
 void DvFree(DraculaView dv)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     GvFree(dv->gv);
     free(dv);
 }
@@ -54,37 +48,31 @@ void DvFree(DraculaView dv)
 
 Round DvGetRound(DraculaView dv)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     return GvGetRound(dv->gv);
 }
 
 int DvGetScore(DraculaView dv)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     return GvGetScore(dv->gv);
 }
 
 int DvGetHealth(DraculaView dv, Player player)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     return GvGetHealth(dv->gv, player);
 }
 
 PlaceId DvGetPlayerLocation(DraculaView dv, Player player)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     return GvGetPlayerLocation(dv->gv, player);
 }
 
 PlaceId DvGetVampireLocation(DraculaView dv)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     return GvGetVampireLocation(dv->gv);
 }
 
 PlaceId *DvGetTrapLocations(DraculaView dv, int *numTraps)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     return GvGetTrapLocations(dv->gv, numTraps);
 }
 
@@ -93,14 +81,11 @@ PlaceId *DvGetTrapLocations(DraculaView dv, int *numTraps)
 
 PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-
     PlaceId current_place = DvGetPlayerLocation(dv, PLAYER_DRACULA);
     Round current_round = DvGetRound(dv);
     
     // Hasn't made a move yet or invalid place
-    if (current_round < 1 || current_place > MAX_REAL_PLACE 
-        || current_place < MIN_REAL_PLACE) {
+    if (current_place == NOWHERE) {
         *numReturnedMoves = 0;
         return NULL;
     }
@@ -108,16 +93,18 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
     int numReturnedLocs;
     PlaceId *location = DvWhereCanIGo(dv, &numReturnedLocs);
     
-    // Last 5 moves
-    bool canFree;
+    // Last 5 moves and last 5 locations
+    bool canFree1;
+    bool canFree2;
     int numReturned;
     PlaceId *history_moves = GvGetLastMoves(dv->gv, PLAYER_DRACULA, 5,
-                        &numReturned, &canFree);
+                        &numReturned, &canFree1);   
+    PlaceId *history_locations = GvGetLastLocations(dv->gv, PLAYER_DRACULA, 5,
+                        &numReturned, &canFree2);
     // All the locations reachable by Dracula
     int num_reached;
     PlaceId *reached_location = GvGetReachable(dv->gv, PLAYER_DRACULA,
-        current_round, current_place, &num_reached);
-    
+        current_round, current_place, &num_reached);    
     bool hide_exist = false;
     bool double_back_exist = false;
     bool double_back[5] = {false};
@@ -131,12 +118,14 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
         if (history_moves[i] == DOUBLE_BACK_5) double_back_exist = true;
         for (int j = 0; j < num_reached; j++) {
             // To make sure which double_back is available
-            if (history_moves[i] == reached_location[j])
+            if (history_locations[i] == reached_location[j])
                 double_back[numReturned - 1 - i] = true;
         }
     }
-    if (canFree)
+    if (canFree1)
         free(history_moves);
+    if (canFree2)
+        free(history_locations);
     free(reached_location);
     if (double_back_exist && hide_exist && numReturnedLocs == 0) {
         // No moves available
@@ -252,14 +241,12 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 
 PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     return DvWhereCanTheyGo(dv, PLAYER_DRACULA, numReturnedLocs);
 }
 
 PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
                              int *numReturnedLocs)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     return DvWhereCanTheyGoByType(dv, PLAYER_DRACULA, road, false, boat,
         numReturnedLocs);
 }
@@ -267,17 +254,14 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
 PlaceId *DvWhereCanTheyGo(DraculaView dv, Player player,
                           int *numReturnedLocs)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-
     PlaceId current_place = DvGetPlayerLocation(dv, player);
     Round current_round = DvGetRound(dv);
-    //Hasn't made a move
-    if (current_round < 1 || current_place > MAX_REAL_PLACE 
-        || current_place < MIN_REAL_PLACE) {
+    // Hasn't made a move
+    if (current_place == NOWHERE) {
         *numReturnedLocs = 0;
         return NULL;
     }
-    // hunter: next round
+    // For hunter, it is next round
     if (player != PLAYER_DRACULA)
         current_round += 1;
     
@@ -288,7 +272,7 @@ PlaceId *DvWhereCanTheyGo(DraculaView dv, Player player,
         // all the trials in the last 5 rounds
         int numReturned;
         bool canFree = true;
-        PlaceId *history_moves = GvGetLastMoves(dv->gv, PLAYER_DRACULA, 5,
+        PlaceId *history_moves = GvGetLastLocations(dv->gv, PLAYER_DRACULA, 5,
             &numReturned, &canFree);
         // check whether the place is in the trial
         int i = 0;
@@ -319,16 +303,14 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     PlaceId current_place = DvGetPlayerLocation(dv, player);
     Round current_round = DvGetRound(dv);
-    //Hasn't made a move
-    if (current_round < 1 || current_place > MAX_REAL_PLACE 
-        || current_place < MIN_REAL_PLACE) {
+    // Hasn't made a move
+    if (current_place == NOWHERE) {
         *numReturnedLocs = 0;
         return NULL;
     }
-    // hunter: next round
+    // For hunter, it is next round
     if (player != PLAYER_DRACULA)
         current_round += 1;
     
@@ -339,7 +321,7 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
         // all the trials in the last 5 rounds
         int numReturned;
         bool canFree = true;
-        PlaceId *history_moves = GvGetLastMoves(dv->gv, PLAYER_DRACULA, 5,
+        PlaceId *history_moves = GvGetLastLocations(dv->gv, PLAYER_DRACULA, 5,
             &numReturned, &canFree);
         // check whether the place is in the trial
         int i = 0;
@@ -366,7 +348,3 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
     return place;
 }
 
-////////////////////////////////////////////////////////////////////////
-// Your own interface functions
-
-// TODO

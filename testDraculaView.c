@@ -214,11 +214,12 @@ int main(void)
         
         int numMoves = -1;
         PlaceId *moves = DvGetValidMoves(dv, &numMoves);
-        assert(numMoves == 3);
+        assert(numMoves == 4);
         sortPlaces(moves, numMoves);
         assert(moves[0] == GALATZ);
         assert(moves[1] == KLAUSENBURG);
-        assert(moves[2] == DOUBLE_BACK_2);
+        assert(moves[2] == DOUBLE_BACK_1);
+        assert(moves[3] == DOUBLE_BACK_2);
         free(moves);
         
         printf("Test passed!\n");
@@ -304,7 +305,7 @@ int main(void)
         free(locs);
         
         printf("Test passed!\n");
-        //DvFree(dv);
+        DvFree(dv);
     }
     
     {///////////////////////////////////////////////////////////////////
@@ -392,8 +393,9 @@ int main(void)
         printf("Test passed!\n");
         DvFree(dv);
     }
-    
+
 
     return EXIT_SUCCESS;
 }
+
 

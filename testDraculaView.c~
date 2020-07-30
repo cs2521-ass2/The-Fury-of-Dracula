@@ -214,11 +214,12 @@ int main(void)
         
         int numMoves = -1;
         PlaceId *moves = DvGetValidMoves(dv, &numMoves);
-        assert(numMoves == 3);
+        assert(numMoves == 4);
         sortPlaces(moves, numMoves);
         assert(moves[0] == GALATZ);
         assert(moves[1] == KLAUSENBURG);
-        assert(moves[2] == DOUBLE_BACK_2);
+        assert(moves[2] == DOUBLE_BACK_1);
+        assert(moves[3] == DOUBLE_BACK_2);
         free(moves);
         
         printf("Test passed!\n");
@@ -304,7 +305,7 @@ int main(void)
         free(locs);
         
         printf("Test passed!\n");
-        DvFree(dv);
+        //DvFree(dv);
     }
     
     {///////////////////////////////////////////////////////////////////
@@ -337,7 +338,7 @@ int main(void)
     
     {///////////////////////////////////////////////////////////////////
     
-        printf("Test for DvWhereCanIGoByType and DvWhereCanTheyGoByType\n");
+        printf("Test for DvWhereCanIGoByType \n");
         
         char *trail =
             "GGE.... SGE.... HGE.... MGE.... DKL.V.. "
@@ -364,7 +365,35 @@ int main(void)
     }
     
     
+    {///////////////////////////////////////////////////////////////////
     
+        printf("Test for DvWhereCanTheyGoByType\n");
+        
+        char *trail =
+            "GGE.... SGE.... HGE.... MGE.... DKL.V.. "
+            "GGE.... SGE.... HGE.... MGE.... DD1T... "
+            "GGE.... SGE.... HGE.... MGE.... DBCT... "
+            "GGE.... SGE.... HGE.... MGE.... DHIT... "
+            "GGE.... SGE.... HGE.... MGE....";
+        
+        Message messages[24] = {};
+        DraculaView dv = DvNew(trail, messages);
+        
+        int numLocs = -1;
+        PlaceId *locs = DvWhereCanTheyGoByType(dv, PLAYER_DRACULA, 
+            true, false, true, &numLocs);
+        assert(numLocs == 4);
+        sortPlaces(locs, numLocs);
+        assert(locs[0] == BELGRADE);
+        assert(locs[1] == CONSTANTA);
+        assert(locs[2] == GALATZ);
+        assert(locs[3] == SOFIA);
+        free(locs);
+        
+        printf("Test passed!\n");
+        DvFree(dv);
+    }
+
 
     return EXIT_SUCCESS;
 }

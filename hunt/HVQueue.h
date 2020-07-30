@@ -21,10 +21,8 @@ void enqueue(struct Queue* queue, PlaceId p);
 
 // Function to remove an item from queue.
 // It changes front and size
-PlaceId dequeue(struct Queue* queue);
+int dequeue(struct Queue* queue);
 
 // Check if place is already in to-visit queue.
 int isNotInQueue (struct Queue* queue, PlaceId p);
 
-// drop the queue
-void dropHunterQueue(struct Queue* queue);
