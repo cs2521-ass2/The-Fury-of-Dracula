@@ -22,7 +22,7 @@ LIBS =
 all: $(BINS)
 
 dracula: playerDracula.o dracula.o DraculaView.o $(OBJS) $(LIBS)
-hunter: playerHunter.o hunter.o HunterView.o HVQueue.o $(OBJS) $(LIBS)
+hunter: playerHunter.o hunter.o HunterView.o $(OBJS) $(LIBS)
 
 playerDracula.o: player.c dracula.h Game.h DraculaView.h GameView.h Places.h
 	$(CC) $(CFLAGS) -DI_AM_DRACULA -c $< -o $@
