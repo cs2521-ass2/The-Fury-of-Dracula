@@ -287,7 +287,7 @@ int main(void)
         printf("Test passed!\n");
     }
 
-{///////////////////////////////////////////////////////////////////
+    {///////////////////////////////////////////////////////////////////
 
         printf("Testing Dracula's last known location 2 (moving to city preoccupied by hunter \n");
         
@@ -310,13 +310,13 @@ int main(void)
             
     }
     
- /*    {///////////////////////////////////////////////////////////////////
+     {///////////////////////////////////////////////////////////////////
 
         printf("Testing Dracula's last known location 3 (hunter research) \n");
         
         char *trail = 
             "GGE.... SGE.... HGE.... MGE.... DC?.V.. "
-            "GPA.... SPA.... HPA.... MPA.... DC?T... "
+            "GPA.... SPA.... HPA.... MPA.... DBDT... "
             "GBU.... SBU.... HBU.... MBU.... DC?T... "
             "GCO.... SCO.... HCO.... MCO.... DC?T... "
             "GLI.... SLI.... HLI.... MLI.... DC?T... "
@@ -328,14 +328,12 @@ int main(void)
         
         assert(HvGetPlayerLocation(hv, PLAYER_DRACULA) == CITY_UNKNOWN);
         Round round = -1;
-        assert((HvGetLastKnownDraculaLocation(hv, &round) >= MIN_REAL_PLACE) && 
-                   (HvGetLastKnownDraculaLocation(hv, &round) <= NUM_REAL_PLACES));
-        assert(round == 7);
-        
+        assert(HvGetLastKnownDraculaLocation(hv, &round) == BUDAPEST);
+        assert(round == 1);
         HvFree(hv);
         printf("Test passed!\n");           
             
-    } */
+    } 
     
     {///////////////////////////////////////////////////////////////////
         

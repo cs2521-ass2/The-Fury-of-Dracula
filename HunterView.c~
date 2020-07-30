@@ -87,11 +87,12 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
     int numReturnedLocs = 0;
     Round current_round = HvGetRound(hv);
     bool canFree;
-    PlaceId *last_moves = GvGetLastMoves(hv->gv, PLAYER_DRACULA, 6,
+    PlaceId *last_moves = GvGetLastLocations(hv->gv, PLAYER_DRACULA, 6,
                             &numReturnedLocs, &canFree);
     
     // Check whether the last 6 moves are real locations
     for (int i = numReturnedLocs - 1; i >= 0; i--) {
+        printf("%d\n", last_moves[i]);
         if (last_moves[i] >= MIN_REAL_PLACE && 
             last_moves[i] <= MAX_REAL_PLACE) {
             // Change the round and return the last real location
@@ -252,9 +253,4 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
                     road, rail, boat, numReturnedLocs);
     return place;
 }
-
-////////////////////////////////////////////////////////////////////////
-// Your own interface functions
-
-// TODO
 

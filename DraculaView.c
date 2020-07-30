@@ -92,16 +92,18 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
     int numReturnedLocs;
     PlaceId *location = DvWhereCanIGo(dv, &numReturnedLocs);
     
-    // Last 5 moves
-    bool canFree;
+    // Last 5 moves and last 5 locations
+    bool canFree1;
+    bool canFree2;
     int numReturned;
     PlaceId *history_moves = GvGetLastMoves(dv->gv, PLAYER_DRACULA, 5,
-                        &numReturned, &canFree);
+                        &numReturned, &canFree1);   
+    PlaceId *history_locations = GvGetLastLocations(dv->gv, PLAYER_DRACULA, 5,
+                        &numReturned, &canFree2);
     // All the locations reachable by Dracula
     int num_reached;
     PlaceId *reached_location = GvGetReachable(dv->gv, PLAYER_DRACULA,
-        current_round, current_place, &num_reached);
-    
+        current_round, current_place, &num_reached);    
     bool hide_exist = false;
     bool double_back_exist = false;
     bool double_back[5] = {false};
@@ -115,12 +117,14 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
         if (history_moves[i] == DOUBLE_BACK_5) double_back_exist = true;
         for (int j = 0; j < num_reached; j++) {
             // To make sure which double_back is available
-            if (history_moves[i] == reached_location[j])
+            if (history_locations[i] == reached_location[j])
                 double_back[numReturned - 1 - i] = true;
         }
     }
-    if (canFree)
+    if (canFree1)
         free(history_moves);
+    if (canFree2)
+        free(history_locations);
     free(reached_location);
     if (double_back_exist && hide_exist && numReturnedLocs == 0) {
         // No moves available
@@ -267,7 +271,7 @@ PlaceId *DvWhereCanTheyGo(DraculaView dv, Player player,
         // all the trials in the last 5 rounds
         int numReturned;
         bool canFree = true;
-        PlaceId *history_moves = GvGetLastMoves(dv->gv, PLAYER_DRACULA, 5,
+        PlaceId *history_moves = GvGetLastLocations(dv->gv, PLAYER_DRACULA, 5,
             &numReturned, &canFree);
         // check whether the place is in the trial
         int i = 0;
@@ -316,7 +320,7 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
         // all the trials in the last 5 rounds
         int numReturned;
         bool canFree = true;
-        PlaceId *history_moves = GvGetLastMoves(dv->gv, PLAYER_DRACULA, 5,
+        PlaceId *history_moves = GvGetLastLocations(dv->gv, PLAYER_DRACULA, 5,
             &numReturned, &canFree);
         // check whether the place is in the trial
         int i = 0;
