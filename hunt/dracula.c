@@ -209,4 +209,3 @@ static PlaceId *hunterPossiblePlaces(DraculaView dv, int *possible_places) {
     }
     return places;
 }
-
