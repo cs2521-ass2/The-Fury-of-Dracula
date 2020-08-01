@@ -10,6 +10,7 @@
 ////////////////////////////////////////////////////////////////////////
 
 #include <stdlib.h>
+#include <time.h>
 #include "Game.h"
 #include "hunter.h"
 #include "HunterView.h"
@@ -27,6 +28,7 @@ void decideHunterMove(HunterView hv)
     
     // When the game starts, each hunter will randomly pick a place
     if (round == 0) {
+        srandom(time(NULL));
         int randomPlace = random() % MAX_REAL_PLACE;
         char *ram = placeIdToAbbrev(randomPlace);
         return registerBestPlay(ram, "Random place right now.");
@@ -38,6 +40,7 @@ void decideHunterMove(HunterView hv)
     
     int numReturnedLocs;
     PlaceId *reachable = HvWhereCanIGo(hv, &numReturnedLocs);
+    srandom(time(NULL));
     int randomIndex = random() % numReturnedLocs;
     
     char *currPlaceStr = placeIdToAbbrev(currPlace);
@@ -113,6 +116,7 @@ void decideHunterMove(HunterView hv)
             
         } else if (round - draLastRound > 6 && round - draLastRound < 10) {
             // Random place where no other hunter's there
+            srandom(time(NULL));
             int value = random() % numReturnedLocs;
             int i;
             for (i = 0; i < numReturnedLocs; i++) {
