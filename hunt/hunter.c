@@ -133,9 +133,7 @@ void decideHunterMove(HunterView hv)
             return registerBestPlay(currPlaceStr, "Rest.");
         }
         
-    }
-    
-    
+    }  
 }
 
 
