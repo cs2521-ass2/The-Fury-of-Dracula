@@ -44,7 +44,6 @@ void decideHunterMove(HunterView hv)
     int randomIndex = random() % numReturnedLocs;
     
     char *currPlaceStr = placeIdToAbbrev(currPlace);
-    
     PlaceId LastKnown = HvGetLastKnownDraculaLocation(hv, &draLastRound);
     
     // Rest to gain life points
@@ -74,16 +73,20 @@ void decideHunterMove(HunterView hv)
             return registerBestPlay(currPlaceStr, "Rest.");
         } else {
             int i;
+            srandom(time(NULL));
+            int value = random() % numReturnedLocs;
             for (i = 0; i < numReturnedLocs; i++) {
-                if (!otherHuntersNearby(hv, reachable[i], currPlayer)) {
+                if (!otherHuntersNearby(hv, reachable[value], currPlayer)) {
                     break;
                 }
+                value++;
+                value = value % numReturnedLocs;
             }
 
             if (i == numReturnedLocs) {
                 return registerBestPlay(placeIdToAbbrev(reachable[randomIndex]), "Next random place.");
             } else {
-                return registerBestPlay(placeIdToAbbrev(reachable[i]), "To somewhere don't have a hunter.");
+                return registerBestPlay(placeIdToAbbrev(reachable[value]), "To somewhere don't have a hunter.");
             }
         }
         
@@ -100,16 +103,19 @@ void decideHunterMove(HunterView hv)
             } else {
                 // Random Place
                 int i;
+                srandom(time(NULL));
+                int value = random() % numReturnedLocs;
                 for (i = 0; i < numReturnedLocs; i++) {
-                    if (!otherHuntersNearby(hv, reachable[i], currPlayer)) {
+                    if (!otherHuntersNearby(hv, reachable[value], currPlayer)) {
                         break;
                     }
+                    value++;
+                    value = value % numReturnedLocs;
                 }
-
                 if (i == numReturnedLocs) {
                     return registerBestPlay(placeIdToAbbrev(reachable[randomIndex]), "Next random place.");
                 } else {
-                    return registerBestPlay(placeIdToAbbrev(reachable[i]), "To somewhere don't have a hunter.");
+                    return registerBestPlay(placeIdToAbbrev(reachable[value]), "To somewhere don't have a hunter.");
                 }
             }
             

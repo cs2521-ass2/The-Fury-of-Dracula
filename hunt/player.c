@@ -78,9 +78,12 @@ typedef HunterView View;
 
 int main(void)
 {
-    char *pastPlays = xPastPlays;
-    Message msgs[] = xMsgs;
+    //char *pastPlays = xPastPlays;
+    char *pastPlays = "GNS.... SKL.... HST.... MLO.... DC?....";
+                    
 
+    Message msgs[] = xMsgs;
+    
     View state = ViewNew(pastPlays, msgs);
     decideMove(state);
     ViewFree(state);
