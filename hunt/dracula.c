@@ -46,6 +46,12 @@ void decideDraculaMove(DraculaView dv)
             }
             if (!dangerous) {
                 initial_places[numMoves++] = i;
+                // if castle is safe, go to castle directly
+                if (i == CASTLE_DRACULA) {
+                    registerBestPlay(placeIdToAbbrev(i), "Wryyyyyyyyyyyyy!");
+                    free(dangerousPlaces);
+                    return;
+                }
             }
         }
         // generate a random place from initial_places
