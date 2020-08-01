@@ -19,16 +19,28 @@
 
 
 static PlaceId *hunterPossiblePlaces(DraculaView dv, int *possible_places);
+static PlaceId *draculaTrails(DraculaView dv);
+static bool trail_revealed(PlaceId *trails, DraculaView dv);
 
 
 void decideDraculaMove(DraculaView dv)
 {
     Round current_round = DvGetRound(dv);
+    PlaceId current_place = DvGetPlayerLocation(dv, PLAYER_DRACULA);
     // get all the dangerousPlaces that hunters can possibly go to
     int possible_places = 0;
     PlaceId *dangerousPlaces = hunterPossiblePlaces(dv, &possible_places);
     bool dangerous;
     bool safe_castle = true;
+    
+    for (int i = 0; i < possible_places; i++) {
+        if (dangerousPlaces[i] == CASTLE_DRACULA) {
+            safe_castle = false;
+            break;
+        }
+            
+    }
+    
     if (current_round == 0) {
         // initialize
         PlaceId initial_places[NUM_REAL_PLACES];
@@ -62,16 +74,90 @@ void decideDraculaMove(DraculaView dv)
         free(dangerousPlaces);
         return;
     } else {
+        
+        
         // get all possible moves of dracula
         int numReturnedMoves;
+        int numReturnedLocs;
+        int numSeaLocs;
         PlaceId *moves = DvGetValidMoves(dv, &numReturnedMoves);
+        PlaceId *locations = DvWhereCanIGo(dv, &numReturnedLocs);
+        PlaceId *locations_sea = DvWhereCanIGoByType(dv, false, true,
+                             &numSeaLocs);      
+        PlaceId *trails = draculaTrails(dv);
+        
+        bool revealed = trail_revealed(trails, dv);
+
+        
+        if (current_place == CASTLE_DRACULA) {
+            for (int i = 0; i < numReturnedMoves; i++) {
+                if (moves[i] == HIDE && safe_castle) {
+                    registerBestPlay("HI", "Mwahahahaha");
+                    return;
+                }
+            }  
+            registerBestPlay("GA", "Mwahahahaha");
+            return;
+        }
+        if (current_place == GALATZ) {
+            registerBestPlay("CN", "Mwahahahaha");
+            return;
+        }
+/*        if (current_place == CONSTANTA) {*/
+/*            registerBestPlay("BS", "Mwahahahaha");*/
+/*            return;*/
+/*        }*/
+/*        if (current_place == BLACK_SEA) {*/
+/*            registerBestPlay("IO", "Mwahahahaha");*/
+/*            return;*/
+/*        }*/
+/*        if (current_place == IONIAN_SEA) {*/
+/*            registerBestPlay("TS", "Mwahahahaha");*/
+/*            return;*/
+/*        }*/
+/*        if (current_place == TYRRHENIAN_SEA) {*/
+/*            registerBestPlay("GO", "Mwahahahaha");*/
+/*            return;*/
+/*        }*/
+        
         // if blood points are low or no possible moves
         if (DvGetHealth(dv, PLAYER_DRACULA) <= 10 || numReturnedMoves == 0){
             registerBestPlay("TP", "Bye bye");
             return;
         }
+        
+        
+        if (numReturnedLocs == 0) {
+            if (!revealed) {
+                srandom(time(NULL));
+                registerBestPlay(placeIdToAbbrev(moves[random() % numReturnedMoves]), 
+                    "Mwahahahaha");
+                return;
+            } else {
+                registerBestPlay("TP", "Bye bye");
+                return;
+            }
+        }
+        
         // remove dangerous places from possible moves
         int i = 0;
+        while (i < numReturnedLocs) {
+            dangerous = false;
+            for (int j = 0; j < possible_places; j++) {
+                if (locations[i] == dangerousPlaces[j] &&
+                    placeIdToType(locations[i]) != SEA) {
+                    dangerous = true;
+                    break;
+                }
+            }
+            if (dangerous) {
+                locations[i] = locations[--numReturnedLocs];
+            } else {
+                i++;
+            }
+        }
+        
+        i = 0;
         while (i < numReturnedMoves) {
             dangerous = false;
             for (int j = 0; j < possible_places; j++) {
@@ -87,16 +173,38 @@ void decideDraculaMove(DraculaView dv)
                 i++;
             }
         }
-        free(dangerousPlaces);
+        
         // no possible moves
         if (numReturnedMoves == 0) {
             registerBestPlay("TP", "Bye bye");
             free(moves);
             return;
         }
+        
+        
+        if (numReturnedLocs == 0) {       
+            if (!revealed) {
+                srandom(time(NULL));
+                registerBestPlay(placeIdToAbbrev(moves[random() % numReturnedMoves]), 
+                    "Mwahahahaha");
+                return;
+            } else {
+                registerBestPlay("TP", "Bye bye");
+                return;
+            }
+        }
+        
+        
+        if (revealed && locations_sea != NULL) {
+            registerBestPlay(placeIdToAbbrev(locations_sea[0]), 
+            "Mwahahahaha");
+            return;
+        }
+
+
         // generate a random place from possible moves
         srandom(time(NULL));
-        registerBestPlay(placeIdToAbbrev(moves[random() % numReturnedMoves]), 
+        registerBestPlay(placeIdToAbbrev(locations[random() % numReturnedLocs]), 
             "Mwahahahaha");
         free(moves);
         return;
@@ -216,3 +324,56 @@ static PlaceId *hunterPossiblePlaces(DraculaView dv, int *possible_places) {
     }
     return places;
 }
+
+
+
+static PlaceId *draculaTrails(DraculaView dv) {
+    PlaceId *trails = malloc(6 * sizeof(PlaceId));
+    for (int i = 0; i < 6; i++) {
+        trails[i] = NOWHERE;
+    }
+    if (DvGetVampireLocation(dv) != NOWHERE) {
+        trails[0] = DvGetVampireLocation(dv);
+    }
+    int numTraps;
+    PlaceId *traps = DvGetTrapLocations(dv, &numTraps);
+    for (int i = 0; i < numTraps; i++) {
+        bool exist = false;
+        int j;
+        for (j = 0; trails[j] != NOWHERE && j < 6; j++) {
+            if (traps[i] == trails[j]) {
+                exist = true;
+                break;
+            }
+        }
+        if (!exist) {
+            trails[j] = traps[i];
+        }
+    }
+    free(traps);
+    return trails;
+}
+
+
+
+static bool trail_revealed(PlaceId *trails, DraculaView dv) {
+    PlaceId currG = DvGetPlayerLocation(dv, PLAYER_LORD_GODALMING);
+    
+    PlaceId currS = DvGetPlayerLocation(dv, PLAYER_DR_SEWARD);
+    
+    PlaceId currH = DvGetPlayerLocation(dv, PLAYER_VAN_HELSING);
+    
+    PlaceId currM = DvGetPlayerLocation(dv, PLAYER_MINA_HARKER);
+    
+    for (int i = 0; i < 6 && trails[i] != NOWHERE; i++) {
+        if (currG == trails[i]) return true;
+        if (currS == trails[i]) return true;
+        if (currH == trails[i]) return true;
+        if (currM == trails[i]) return true;
+    }
+    return false;
+}
+
+
+
+
