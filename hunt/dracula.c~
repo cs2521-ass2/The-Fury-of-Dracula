@@ -28,6 +28,7 @@ void decideDraculaMove(DraculaView dv)
     int possible_places = 0;
     PlaceId *dangerousPlaces = hunterPossiblePlaces(dv, &possible_places);
     bool dangerous;
+    bool safe_castle = true;
     if (current_round == 0) {
         // initialize
         PlaceId initial_places[NUM_REAL_PLACES];
@@ -48,7 +49,9 @@ void decideDraculaMove(DraculaView dv)
                 initial_places[numMoves++] = i;
                 // if castle is safe, go to castle directly
                 if (i == CASTLE_DRACULA) {
-                    registerBestPlay(placeIdToAbbrev(, "Wryyyyyyyyyyyyy!");
+                    registerBestPlay(placeIdToAbbrev(i), "Wryyyyyyyyyyyyy!");
+                    free(dangerousPlaces);
+                    return;
                 }
             }
         }
