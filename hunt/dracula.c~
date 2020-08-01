@@ -24,6 +24,7 @@ static PlaceId *hunterPossiblePlaces(DraculaView dv, int *possible_places);
 void decideDraculaMove(DraculaView dv)
 {
     Round current_round = DvGetRound(dv);
+    PlaceId current_place = DvGetPlayerLocation(dv, PLAYER_DRACULA);
     int possible_places = 0;
     PlaceId *dangerousPlaces = hunterPossiblePlaces(dv, &possible_places);
     bool dangerous;
