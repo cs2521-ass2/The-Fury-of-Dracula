@@ -25,7 +25,6 @@ void decideHunterMove(HunterView hv)
 {
 
     int currPlayer = HvGetPlayer(hv);
-    printf("player:%d\n", currPlayer);
     
     int round = HvGetRound(hv);
     
