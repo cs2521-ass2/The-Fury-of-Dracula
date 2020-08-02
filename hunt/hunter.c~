@@ -80,7 +80,7 @@ void decideHunterMove(HunterView hv)
                     break;
                 }
                 value++;
-                value % numReturnedLocs;
+                value = value % numReturnedLocs;
             }
 
             if (i == numReturnedLocs) {
