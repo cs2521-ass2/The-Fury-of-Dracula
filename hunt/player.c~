@@ -78,12 +78,13 @@ typedef HunterView View;
 
 int main(void)
 {
-    char *pastPlays = "GCD.... SPL.... HLV.... MSO.... DC?T... "
+    char *pastPlays = "GCD.... SPL.... HLV.... MSO.... DGET... "
                       "GKL.... SLO.... HSW.... MBC.... DC?T... "
                       "GSZ.... SED.... HLO.... MCN.... DC?T... "
                       "GGA.... SNS.... HMN.... MBC.... DC?T... "
                       "GKL.... SHA.... HSW.... MVI.... DC?T... "
-                      "GKL....";
+                      "GBE.... SBR.... HLO.... MBD.... DC?T... "
+                      "GBE.... SBR.... HLO.... MBD.... DC?T...";
 
                     
 

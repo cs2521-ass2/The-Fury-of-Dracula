@@ -84,7 +84,8 @@ void decideHunterMove(HunterView hv)
     if (currPlayer == PLAYER_LORD_GODALMING) {
         PlaceId *shortestToCD = HvGetShortestPathTo(hv, currPlayer, placeAbbrevToId("CD"), &pathLength);
         
-        if (round >= 6 && LastKnown == NOWHERE) {
+        
+        if (round >= 5 && LastKnown == NOWHERE) {
             return registerBestPlay(currPlaceStr, "Rest.");
         } else if (round - draLastRound > 10) {
             return registerBestPlay(currPlaceStr, "Rest.");
@@ -134,7 +135,7 @@ void decideHunterMove(HunterView hv)
     
     // Chasing for Dracula
     if (LastKnown == NOWHERE) {
-        if (round >= 6) {
+        if (round >= 5) {
             return registerBestPlay(currPlaceStr, "Rest.");
         } else {
             
