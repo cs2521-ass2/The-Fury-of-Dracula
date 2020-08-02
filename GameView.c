@@ -220,7 +220,11 @@ GameView GvNew(char *pastPlays, Message messages[])
 		        is_DOUBLE_BACK_HIDE = placeID;
 		        placeID = new->trail[i - 2];
 
+		    } else if (placeID == TELEPORT) {
+		        placeID = CASTLE_DRACULA;
 		    }
+		    
+		    
 			new->playerPlace[PLAYER_DRACULA] = placeID;
 		    new->trail[i - 1] = placeID;
 			playerIndex = PLAYER_DRACULA;

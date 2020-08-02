@@ -205,11 +205,12 @@ GameView GvNew(char *pastPlays, Message messages[])
 		    }
 		    new->trail[i] = placeID;
 		    
-		    // Store the real placeId if dracula ever used DB or HIDE
+		    // Store the real placeId if dracula ever used DB or HIDE or TP
 		    i = 0;
 		    while (new->trail[i] != NOWHERE) {
 		        i++;
 		    }
+		    
 		    if (placeID >= DOUBLE_BACK_1  && placeID <= DOUBLE_BACK_5) {
 			    is_DOUBLE_BACK_HIDE = placeID;
 		        int trackBack = placeID % DOUBLE_BACK_1;
@@ -220,7 +221,10 @@ GameView GvNew(char *pastPlays, Message messages[])
 		        is_DOUBLE_BACK_HIDE = placeID;
 		        placeID = new->trail[i - 2];
 
+		    } else if (placeID == TELEPORT) {
+		        placeID = CASTLE_DRACULA;
 		    }
+		    
 			new->playerPlace[PLAYER_DRACULA] = placeID;
 		    new->trail[i - 1] = placeID;
 			playerIndex = PLAYER_DRACULA;
