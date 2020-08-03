@@ -131,10 +131,10 @@ void decideDraculaMove(DraculaView dv)
         }
         
         // if blood points are low or no possible moves
-        if (DvGetHealth(dv, PLAYER_DRACULA) <= 10 || numReturnedMoves == 0){
+        if (/*DvGetHealth(dv, PLAYER_DRACULA) <= 10 ||*/ numReturnedMoves == 0){
             registerBestPlay("TP", "Bye bye");
             return;
-        }
+        } 
         
         // only hide or double back available
         if (numReturnedLocs == 0) {
@@ -143,13 +143,12 @@ void decideDraculaMove(DraculaView dv)
                 srandom(time(NULL));
                 registerBestPlay(placeIdToAbbrev(moves[random() % numReturnedMoves]), 
                     "Mwahahahaha");
+                return;           
+            } else { //change from TP to HI
+                registerBestPlay("HI", "Bye bye");
                 return;
-            } else {
-                registerBestPlay("TP", "Bye bye");
-                return;
-            }
-        }
-        
+            } 
+        }       
         // remove dangerous places from possible moves
         int i = 0;
         while (i < numReturnedLocs) {
@@ -184,6 +183,111 @@ void decideDraculaMove(DraculaView dv)
             }
         }
         
+        if (numReturnedLocs == 0) {
+            int numGo;  
+            PlaceId *locations2 = DvWhereCanIGo(dv, &numGo);
+            int numGreach;
+            PlaceId *G_reach = DvWhereCanTheyGo(dv, PLAYER_LORD_GODALMING, &numGreach);
+            int numSreach;
+            PlaceId *S_reach = DvWhereCanTheyGo(dv, PLAYER_DR_SEWARD, &numSreach);
+            int numHreach;
+            PlaceId *H_reach = DvWhereCanTheyGo(dv, PLAYER_VAN_HELSING, &numHreach);
+            int numMreach;
+            PlaceId *M_reach = DvWhereCanTheyGo(dv, PLAYER_MINA_HARKER, &numMreach);
+            
+            //intersections array to store the number of intersections of paths
+            int intersections[numGo];
+            for (int y = 0; y < numGo; y++) {
+                intersections[y] = 0;
+            } // array to store lowest hp of each intersection
+            int lowestHP[numGo];
+            for (int y = 0; y < numGo; y++) {
+                lowestHP[y] = 9;
+            }
+            
+            int y = 0;
+            while (y < numGo) {
+                int x = 0; 
+                while (x < numGreach) { 
+                    if (locations2[y] == G_reach[x]) {
+                        intersections[y] += 1;
+                        lowestHP[y] = DvGetHealth(dv, PLAYER_LORD_GODALMING);                      
+                    }
+                    x++;
+                }
+                y++;
+            }
+            y = 0;
+            
+            while (y < numGo) {
+                int x = 0; 
+                while (x < numSreach) {
+                    if (locations2[y] == S_reach[x]) {
+                        intersections[y] += 1;
+                        int HP = DvGetHealth(dv, PLAYER_DR_SEWARD);
+                        // if there are more than 1 lowest-intersections, 
+                        // take the one with lowest-hp hunter.
+                        if (HP < lowestHP[y]) {
+                            lowestHP[y] = HP; 
+                        }                     
+                    }
+                    x++;
+                }
+                y++;
+            }        
+            y = 0;
+            
+            while (y < numGo) {
+                int x = 0; 
+                while (x < numHreach) {
+                    if (locations2[y] == H_reach[x]) {
+                        intersections[y] += 1;
+                        int HP = DvGetHealth(dv, PLAYER_VAN_HELSING);
+                        if (HP < lowestHP[y]) {
+                            lowestHP[y] = HP; 
+                        }                     
+                    }
+                    x++;
+                }
+                y++;
+            } 
+            y = 0;
+            
+            while (y < numGo) {
+                int x = 0; 
+                while (x < numMreach) {
+                    if (locations2[y] == M_reach[x]) {
+                        intersections[y] += 1;
+                        int HP = DvGetHealth(dv, PLAYER_MINA_HARKER);
+                        if (HP < lowestHP[y]) {
+                            lowestHP[y] = HP; 
+                        }                     
+                    }
+                    x++;
+                }
+                y++;
+            }  
+            
+            int ToGo = 0; 
+            int z = 1;
+            while (z < numGo) {
+                if(intersections[z] > intersections[ToGo]) {
+                    z++;
+                }
+                else if (intersections[z] < intersections[ToGo]) {
+                    ToGo = z;
+                    z++;
+                } else { //if equal
+                    if (lowestHP[z] < lowestHP[ToGo]) {
+                        ToGo = z;
+                    }
+                    z++;
+               }
+           }
+           registerBestPlay(placeIdToAbbrev(locations2[ToGo]), "Mwahahahaha");
+       }
+                    
+                                                                       
         // no possible moves
         if (numReturnedMoves == 0) {
             registerBestPlay("TP", "Bye bye");
@@ -200,7 +304,7 @@ void decideDraculaMove(DraculaView dv)
                     "Mwahahahaha");
                 return;
             } else {
-                registerBestPlay("TP", "Bye bye");
+                registerBestPlay("HI", "Bye bye");
                 return;
             }
         }
