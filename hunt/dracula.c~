@@ -92,43 +92,7 @@ void decideDraculaMove(DraculaView dv)
         
         bool revealed = trail_revealed(trails, dv);
 
-        // if in castle, try to move to port city or hide to gain hp
-        if (current_place == CASTLE_DRACULA) {
-            
-            bool galgatz = false;
-            for (int i = 0; i < numReturnedMoves; i++) {
-                if (moves[i] == HIDE && safe_castle) {
-                    registerBestPlay("HI", "Mwahahahaha");
-                    return;
-                }
-                if (moves[i] == GALATZ) {
-                    galgatz = true;
-                }
-            }  
-            // generate a random place from possible moves
-            if (galgatz) {
-                registerBestPlay("GA", "Mwahahahaha");
-                return;
-            }
-            srandom(time(NULL));
-            registerBestPlay(placeIdToAbbrev(locations[random() % numReturnedLocs]), 
-                "Mwahahahaha");
-            return;
-        }
-        // try to move to port city
-        if (current_place == GALATZ) {
-            for (int i = 0; i < numReturnedMoves; i++) {
-                if (moves[i] == CONSTANTA) {
-                    registerBestPlay("CN", "Mwahahahaha");
-                    return;
-                }
-            }
-            srandom(time(NULL));
-            registerBestPlay(placeIdToAbbrev(locations[random() % numReturnedLocs]), 
-                "Mwahahahaha");
-            return; 
-            
-        }
+        
         
         // if no possible moves
         if (numReturnedMoves == 0){
@@ -325,11 +289,48 @@ void decideDraculaMove(DraculaView dv)
                         ToGo = z;
                     }
                     z++;
-               }
-           }
-           registerBestPlay(placeIdToAbbrev(locations2[ToGo]), "Mwahahahaha");
-           return;
-       }
+                }
+            }
+            registerBestPlay(placeIdToAbbrev(locations2[ToGo]), "Mwahahahaha");
+            return;
+        }
+        // if in castle, try to move to port city or hide to gain hp
+        if (current_place == CASTLE_DRACULA) {
+            
+            bool galgatz = false;
+            for (int i = 0; i < numReturnedMoves; i++) {
+                if (moves[i] == HIDE && safe_castle) {
+                    registerBestPlay("HI", "Mwahahahaha");
+                    return;
+                }
+                if (moves[i] == GALATZ) {
+                    galgatz = true;
+                }
+            }  
+            // generate a random place from possible moves
+            if (galgatz) {
+                registerBestPlay("GA", "Mwahahahaha");
+                return;
+            }
+            srandom(time(NULL));
+            registerBestPlay(placeIdToAbbrev(locations[random() % numReturnedLocs]), 
+                "Mwahahahaha");
+            return;
+        }
+        // try to move to port city
+        if (current_place == GALATZ) {
+            for (int i = 0; i < numReturnedMoves; i++) {
+                if (moves[i] == CONSTANTA) {
+                    registerBestPlay("CN", "Mwahahahaha");
+                    return;
+                }
+            }
+            srandom(time(NULL));
+            registerBestPlay(placeIdToAbbrev(locations[random() % numReturnedLocs]), 
+                "Mwahahahaha");
+            return; 
+            
+        }
       
         // if the trail is revealed, try to move to the sea
         if (revealed && numSeaLocs != 0) {
