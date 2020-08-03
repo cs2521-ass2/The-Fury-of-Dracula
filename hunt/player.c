@@ -78,13 +78,13 @@ typedef HunterView View;
 
 int main(void)
 {
-    char *pastPlays = "GCD.... SPL.... HLV.... MSO.... DC?T... "
-                      "GKL.... SLO.... HSW.... MBC.... DPAT... "
-                      "GSZ.... SED.... HLO.... MCN.... DC?T... "
-                      "GGA.... SNS.... HMN.... MBC.... DC?T... "
-                      "GKL.... SHA.... HSW.... MVI.... DC?T... "
-                      "GBE.... SBR.... HLO.... MBD.... DC?T... "
-                      "GBE.... SBR.... HLO.... MBD.... DC?T...";
+    char *pastPlays = "GCD.... SPL.... HLV.... MSO.... DCA...."
+                      "GKL.... SLO.... HSW.... MBC.... DGRT..."
+                      "GSZ.... SED.... HLO.... MCN.... DALT..."
+                      "GGA.... SNS.... HMN.... MBC.... DSR...."
+                      "GKL.... SHA.... HSW.... MVI.... DTO...."
+                      "GBE.... SBR.... HLO.... MBD.... DMR...."
+                      "GBE.... SBR.... HLO.... MBD.... DGE....";
 
                     
 
@@ -100,7 +100,7 @@ int main(void)
 
 // Saves characters from play (and appends a terminator)
 // and saves characters from message (and appends a terminator)
-void registerBestPlay(char *play, Message message)
+void registerBestPlay(const char *play, Message message)
 {
     strncpy(latestPlay, play, MOVE_SIZE - 1);
     latestPlay[MOVE_SIZE - 1] = '\0';

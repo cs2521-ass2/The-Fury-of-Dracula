@@ -163,7 +163,7 @@ PlaceType placeIdToType(PlaceId pid);
 const char *placeIdToName(PlaceId pid);
 
 /** given a place number, return its two-char code */
-char *placeIdToAbbrev(PlaceId pid);
+const char *placeIdToAbbrev(PlaceId pid);
 
 ////////////////////////////////////////////////////////////////////////
 

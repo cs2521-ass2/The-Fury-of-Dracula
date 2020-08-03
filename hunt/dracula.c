@@ -53,12 +53,12 @@ void decideDraculaMove(DraculaView dv)
         for (int i = MIN_REAL_PLACE; i <= MAX_REAL_PLACE; i++) {
             dangerous = false;
             for (int j = 0; j < possible_places; j++) {
-                if (i == dangerousPlaces[j] && placeIdToType(i) != SEA) {
+                if (i == dangerousPlaces[j]) {
                     dangerous = true;
                     break;
                 }
             }
-            if (!dangerous) {
+            if (!dangerous && placeIdToType(i) == LAND) {
                 initial_places[numMoves++] = i;
                 // if castle is safe, go to castle directly
                 if (i == CASTLE_DRACULA) {
@@ -130,24 +130,18 @@ void decideDraculaMove(DraculaView dv)
             
         }
         
-        // if blood points are low or no possible moves
-        if (/*DvGetHealth(dv, PLAYER_DRACULA) <= 10 ||*/ numReturnedMoves == 0){
+        // if no possible moves
+        if (numReturnedMoves == 0){
             registerBestPlay("TP", "Bye bye");
             return;
         } 
         
         // only hide or double back available
         if (numReturnedLocs == 0) {
-            if (!revealed) {
-                // if the hunters don't find the trail
-                srandom(time(NULL));
-                registerBestPlay(placeIdToAbbrev(moves[random() % numReturnedMoves]), 
-                    "Mwahahahaha");
-                return;           
-            } else { //change from TP to HI
-                registerBestPlay("HI", "Bye bye");
-                return;
-            } 
+            srandom(time(NULL));
+            registerBestPlay(placeIdToAbbrev(moves[random() % numReturnedMoves]), 
+                "Mwahahahaha");
+            return;           
         }       
         // remove dangerous places from possible moves
         int i = 0;
@@ -184,6 +178,15 @@ void decideDraculaMove(DraculaView dv)
         }
         
         if (numReturnedLocs == 0) {
+            if (numReturnedMoves != 0 && !revealed) {
+                // only hide or double back available      
+                // if the hunters don't find the trail
+                srandom(time(NULL));
+                registerBestPlay(placeIdToAbbrev(moves[random() % numReturnedMoves]), 
+                    "Mwahahahaha");
+                return;
+            }
+         
             int numGo;  
             PlaceId *locations2 = DvWhereCanIGo(dv, &numGo);
             int numGreach;
@@ -204,7 +207,7 @@ void decideDraculaMove(DraculaView dv)
             for (int y = 0; y < numGo; y++) {
                 lowestHP[y] = 9;
             }
-            
+                               
             int y = 0;
             while (y < numGo) {
                 int x = 0; 
@@ -217,6 +220,47 @@ void decideDraculaMove(DraculaView dv)
                 }
                 y++;
             }
+            
+            for (int i = 0; i < numGo; i++) {
+                if (locations2[i] == DvGetPlayerLocation(dv, PLAYER_LORD_GODALMING)) {
+                    intersections[i] += 1;
+                    int HP = DvGetHealth(dv, PLAYER_LORD_GODALMING);
+                    // if there are more than 1 lowest-intersections, 
+                    // take the one with lowest-hp hunter.
+                    if (HP < lowestHP[i]) {
+                        lowestHP[i] = HP; 
+                    }
+                }
+                if (locations2[i] == DvGetPlayerLocation(dv, PLAYER_DR_SEWARD)) {
+                    intersections[i] += 1;
+                    int HP = DvGetHealth(dv, PLAYER_DR_SEWARD);
+                    // if there are more than 1 lowest-intersections, 
+                    // take the one with lowest-hp hunter.
+                    if (HP < lowestHP[i]) {
+                        lowestHP[i] = HP; 
+                    }
+                }
+                if (locations2[i] == DvGetPlayerLocation(dv, PLAYER_VAN_HELSING)) {
+                    intersections[i] += 1;
+                    int HP = DvGetHealth(dv, PLAYER_VAN_HELSING);
+                    // if there are more than 1 lowest-intersections, 
+                    // take the one with lowest-hp hunter.
+                    if (HP < lowestHP[i]) {
+                        lowestHP[i] = HP; 
+                    }
+                }
+                if (locations2[i] == DvGetPlayerLocation(dv, PLAYER_MINA_HARKER)) {
+                    intersections[i] += 1;
+                    int HP = DvGetHealth(dv, PLAYER_MINA_HARKER);
+                    // if there are more than 1 lowest-intersections, 
+                    // take the one with lowest-hp hunter.
+                    if (HP < lowestHP[i]) {
+                        lowestHP[i] = HP; 
+                    }
+                }
+                    
+            }
+            
             y = 0;
             
             while (y < numGo) {
@@ -273,8 +317,7 @@ void decideDraculaMove(DraculaView dv)
             while (z < numGo) {
                 if(intersections[z] > intersections[ToGo]) {
                     z++;
-                }
-                else if (intersections[z] < intersections[ToGo]) {
+                } else if (intersections[z] < intersections[ToGo]) {
                     ToGo = z;
                     z++;
                 } else { //if equal
@@ -285,30 +328,9 @@ void decideDraculaMove(DraculaView dv)
                }
            }
            registerBestPlay(placeIdToAbbrev(locations2[ToGo]), "Mwahahahaha");
+           return;
        }
-                    
-                                                                       
-        // no possible moves
-        if (numReturnedMoves == 0) {
-            registerBestPlay("TP", "Bye bye");
-            free(moves);
-            return;
-        }
-        
-        // only hide or double back available
-        if (numReturnedLocs == 0) {       
-            if (!revealed) {
-                // if the hunters don't find the trail
-                srandom(time(NULL));
-                registerBestPlay(placeIdToAbbrev(moves[random() % numReturnedMoves]), 
-                    "Mwahahahaha");
-                return;
-            } else {
-                registerBestPlay("HI", "Bye bye");
-                return;
-            }
-        }
-        
+      
         // if the trail is revealed, try to move to the sea
         if (revealed && numSeaLocs != 0) {
             srandom(time(NULL));
@@ -500,7 +522,5 @@ static bool trail_revealed(PlaceId *trails, DraculaView dv) {
     }
     return false;
 }
-
-
 
 
