@@ -31,6 +31,22 @@ void decideHunterMove(HunterView hv)
     
     // When the game starts, each hunter will randomly pick a place
     if (round == 0) {
+         if (currPlayer == PLAYER_LORD_GODALMING) {
+            return registerBestPlay("CD", "I'm coming.....");
+        }
+        
+        if (currPlayer == PLAYER_DR_SEWARD) {
+            return registerBestPlay("SA", "I'm coming.....");
+        }
+        
+        if (currPlayer == PLAYER_VAN_HELSING) {
+            return registerBestPlay("RO", "I'm coming.....");
+        }
+        
+        if (currPlayer == PLAYER_MINA_HARKER) {
+            return registerBestPlay("PA", "I'm coming.....");
+        }
+        /*
         if (currPlayer == PLAYER_LORD_GODALMING) {
             return registerBestPlay("CD", "I'm coming.....");
         }
@@ -48,7 +64,7 @@ void decideHunterMove(HunterView hv)
         }
         
         return registerBestPlay(placeIdToAbbrev(randomPlace), "Random place and no other hunters here at round 0.");
-        
+    */    
     }
     
     
@@ -72,7 +88,7 @@ void decideHunterMove(HunterView hv)
     // If Dracula is only one move away and it is revealed, go to that place
     PlaceId draculaLoc = HvGetPlayerLocation(hv, PLAYER_DRACULA);
     if (draculaLoc != CITY_UNKNOWN && draculaLoc != SEA_UNKNOWN && draculaLoc != NOWHERE) {
-        HvGetShortestPathTo(hv, currPlayer, placeAbbrevToId("CD"), &pathLength);
+        HvGetShortestPathTo(hv, currPlayer, draculaLoc, &pathLength);
         if (pathLength <= 1) {
             return registerBestPlay(placeIdToAbbrev(draculaLoc), "Gotcha~");
         }
