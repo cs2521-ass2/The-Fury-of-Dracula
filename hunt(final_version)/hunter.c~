@@ -72,7 +72,7 @@ void decideHunterMove(HunterView hv)
     // If Dracula is only one move away and it is revealed, go to that place
     PlaceId draculaLoc = HvGetPlayerLocation(hv, PLAYER_DRACULA);
     if (draculaLoc != CITY_UNKNOWN && draculaLoc != SEA_UNKNOWN && draculaLoc != NOWHERE) {
-        HvGetShortestPathTo(hv, currPlayer, draculaLoc, &pathLength);
+        HvGetShortestPathTo(hv, currPlayer, placeAbbrevToId("CD"), &pathLength);
         if (pathLength <= 1) {
             return registerBestPlay(placeIdToAbbrev(draculaLoc), "Gotcha~");
         }
