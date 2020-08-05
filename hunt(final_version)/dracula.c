@@ -68,6 +68,8 @@ void decideDraculaMove(DraculaView dv)
                 }
             }
         }
+        registerBestPlay("AO", "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+        return;
         // generate a random place from initial_places
         srandom(time(NULL));
         registerBestPlay(placeIdToAbbrev(initial_places[random() % numMoves]), 

@@ -80,12 +80,12 @@ void decideDraculaMove(DraculaView dv)
         // get all possible moves of dracula and trail
         int numReturnedMoves;
         int numReturnedLocs;
-        int numSeaLocs;
+        //int numSeaLocs;
         int numLandLocs;
         PlaceId *moves = DvGetValidMoves(dv, &numReturnedMoves);
         PlaceId *locations = DvWhereCanIGo(dv, &numReturnedLocs);
-        PlaceId *locations_sea = DvWhereCanIGoByType(dv, false, true,
-                             &numSeaLocs);      
+/*        PlaceId *locations_sea = DvWhereCanIGoByType(dv, false, true,*/
+/*                             &numSeaLocs);      */
         PlaceId *locations_land = DvWhereCanIGoByType(dv, true, false,
                              &numLandLocs);   
         //PlaceId *trails = draculaTrails(dv);
