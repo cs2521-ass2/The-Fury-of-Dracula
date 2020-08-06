@@ -17,8 +17,17 @@
 #include "HunterView.h"
 #include "Places.h"
 
+
+
+
+
 static int ShortestToVam(HunterView hv, PlaceId VamLoc);
 static int otherHuntersNearby(HunterView hv, PlaceId currPlace, Player currPlayer);
+
+int lastHpLG = 9;
+int lastHpDs = 9;
+int lastHpHM = 9;
+int lastHpVH = 9;
 
 
 void decideHunterMove(HunterView hv)
@@ -64,8 +73,38 @@ void decideHunterMove(HunterView hv)
     PlaceId LastKnown = HvGetLastKnownDraculaLocation(hv, &draLastRound);
     int pathLength;
     
+    
+    
+    int currHp = HvGetHealth(hv, currPlayer);
+    if ((round - draLastRound > 3) && currPlayer == PLAYER_LORD_GODALMING && lastHpLG - currHp > 0) {
+        LastKnown = currPlace;
+        lastHpLG = currHp;
+    }
+    
+    if ((round - draLastRound > 3) && currPlayer == PLAYER_DR_SEWARD && lastHpDs - currHp > 0) {
+        LastKnown = currPlace;
+        lastHpDs = currHp;
+    }
+    
+    if ((round - draLastRound > 3) && currPlayer == PLAYER_VAN_HELSING && lastHpVH - currHp > 0) {
+        LastKnown = currPlace;
+        lastHpVH = currHp;
+    }
+    
+    if ((round - draLastRound > 3) && currPlayer == PLAYER_MINA_HARKER && lastHpHM - currHp > 0) {
+        LastKnown = currPlace;
+        lastHpHM = currHp;
+    }
+    
+    
+    
+    
+    
+    
+    
+   
     // Rest to gain life points
-    if (HvGetHealth(hv, currPlayer) <= 3) {
+    if (HvGetHealth(hv, currPlayer) < 3) {
         return registerBestPlay(currPlaceStr, "Rest.");
     }
     
@@ -76,6 +115,7 @@ void decideHunterMove(HunterView hv)
         if (pathLength <= 1) {
             return registerBestPlay(placeIdToAbbrev(draculaLoc), "Gotcha~");
         }
+        LastKnown = draculaLoc;
     }
     
     
@@ -100,7 +140,7 @@ void decideHunterMove(HunterView hv)
             int value = random() % numReturnedLocs;
             for (i = 0; i < numReturnedLocs; i++) {
                 if (!otherHuntersNearby(hv, reachable[value], currPlayer)) {
-                    if (reachable[value] != currPlace) break;
+                    if (reachable[value] != currPlace ) break;
                 }
                 value++;
                 value = value % numReturnedLocs;
