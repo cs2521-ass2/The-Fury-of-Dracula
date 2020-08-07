@@ -81,13 +81,13 @@ void decideDraculaMove(DraculaView dv)
         int numReturnedMoves;
         int numReturnedLocs;
         //int numSeaLocs;
-        int numLandLocs;
+        //int numLandLocs;
         PlaceId *moves = DvGetValidMoves(dv, &numReturnedMoves);
         PlaceId *locations = DvWhereCanIGo(dv, &numReturnedLocs);
 /*        PlaceId *locations_sea = DvWhereCanIGoByType(dv, false, true,*/
 /*                             &numSeaLocs);      */
-        PlaceId *locations_land = DvWhereCanIGoByType(dv, true, false,
-                             &numLandLocs);   
+/*        PlaceId *locations_land = DvWhereCanIGoByType(dv, true, false,*/
+/*                             &numLandLocs);   */
         //PlaceId *trails = draculaTrails(dv);
         
         //bool revealed = trail_revealed(dv);
@@ -98,7 +98,7 @@ void decideDraculaMove(DraculaView dv)
         if (numReturnedMoves == 0){
             registerBestPlay("TP", "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
             return;
-        } 
+        }
         
         // only hide or double back available
         if (numReturnedLocs == 0) {
@@ -350,16 +350,34 @@ void decideDraculaMove(DraculaView dv)
 /*        }*/
 
         // if the trail is not revealed, try to move on the land
-        if (numLandLocs != 0) {
-            srandom(time(NULL));
-            registerBestPlay(placeIdToAbbrev(locations_land[random() % numLandLocs]), 
-                "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
-            return;
-        }
+/*        if (numLandLocs != 0) {*/
+/*            srandom(time(NULL));*/
+/*            registerBestPlay(placeIdToAbbrev(locations_land[random() % numLandLocs]), */
+/*                "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");*/
+/*            return;*/
+/*        }*/
         
         // generate a random place from possible locations
-        srandom(time(NULL));
-        registerBestPlay(placeIdToAbbrev(locations[random() % numReturnedLocs]), 
+        for (int i = 0; i < numReturnedLocs; i++) {
+            for (int j = 0; j < 29; j++) {
+                if(locations[i] == port_city[j]) {
+                    registerBestPlay(placeIdToAbbrev(locations[i]), 
+                        "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+                    return;
+                }
+            }
+        }
+        
+        for (int i = 0; i < numReturnedLocs; i++) {     
+            if(placeIdToType(locations[i]) == LAND) {
+                registerBestPlay(placeIdToAbbrev(locations[i]), 
+                    "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+                return;
+            }
+            
+        }
+        
+        registerBestPlay(placeIdToAbbrev(locations[0]), 
             "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
         free(moves);
         return;
