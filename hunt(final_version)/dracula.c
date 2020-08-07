@@ -26,6 +26,11 @@ static PlaceId *hunterPossiblePlaces(DraculaView dv, int *possible_places);
 // decide the next move of dracula
 void decideDraculaMove(DraculaView dv)
 {
+    PlaceId port_city[29] = {CONSTANTA, VARNA, SALONICA, ATHENS, VALONA,
+        BARI, NAPLES, ROME, VENICE, GENOA, CAGLIARI, HAMBURG, AMSTERDAM, 
+        MARSEILLES, BARCELONA, ALICANTE, CADIZ, LISBON, SANTANDER, 
+        BORDEAUX, NANTES, LE_HAVRE, PLYMOUTH, LONDON, SWANSEA, 
+        LIVERPOOL, EDINBURGH, DUBLIN, GALWAY};
     Round current_round = DvGetRound(dv);
     PlaceId current_place = DvGetPlayerLocation(dv, PLAYER_DRACULA);
     // get all the dangerousPlaces that hunters can possibly go to
@@ -38,40 +43,35 @@ void decideDraculaMove(DraculaView dv)
         if (dangerousPlaces[i] == CASTLE_DRACULA) {
             safe_castle = false;
             break;
-        }
-            
+        }         
     }
     // the first round
     if (current_round == 0) {
-        // initialize
-        PlaceId initial_places[NUM_REAL_PLACES];
-        for (int i = 0; i < NUM_REAL_PLACES; i++) {
-            initial_places[i] = NOWHERE;
+        // if castle is safe, go to castle directly
+        if (safe_castle) {
+            registerBestPlay("CD", "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+            return;
         }
+        // initialize
+        PlaceId initial_places[29] = {0};
         // add all safe places to initial_places
         int numMoves = 0;
-        for (int i = MIN_REAL_PLACE; i <= MAX_REAL_PLACE; i++) {
+        for (int i = 0; i < 29; i++) {
             dangerous = false;
             for (int j = 0; j < possible_places; j++) {
-                if (i == dangerousPlaces[j]) {
+                if (port_city[i] == dangerousPlaces[j]) {
                     dangerous = true;
                     break;
                 }
             }
-            if (!dangerous && placeIdToType(i) == LAND) {
-                initial_places[numMoves++] = i;
-                // if castle is safe, go to castle directly
-                if (i == CASTLE_DRACULA) {
-                    registerBestPlay(placeIdToAbbrev(i), "MY name is ALEX!!!!!");
-                    free(dangerousPlaces);
-                    return;
-                }
+            if (!dangerous ) {
+                initial_places[numMoves++] = port_city[i];       
             }
         }
         // generate a random place from initial_places
         srandom(time(NULL));
         registerBestPlay(placeIdToAbbrev(initial_places[random() % numMoves]), 
-            "I AM ALEX, I AM A GENIUS");
+            "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
         free(dangerousPlaces);
         return;
     } else {
