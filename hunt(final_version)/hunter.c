@@ -16,14 +16,51 @@
 #include "hunter.h"
 #include "HunterView.h"
 #include "Places.h"
+#include "Map.h"
+#include <assert.h>
+#define maximunPlace 100
+
+
+typedef int Item;
+typedef struct QueueRep *Queue;
+struct QueueRep {
+	ConnList head;
+	ConnList tail;
+};
+
+static ConnList createNode(Item item);
+Queue createQueue(void);
+void dropQueue(Queue q);
+void enterQueue(Queue q, Item it);
+Item leaveQueue(Queue q);
+void search(HunterView hv, int radius, PlaceId currPlace, PlaceId *poss, int currPlayer);
+
+
 
 static int ShortestToVam(HunterView hv, PlaceId VamLoc);
 static int otherHuntersNearby(HunterView hv, PlaceId currPlace, Player currPlayer);
 
+int lastHpLG = 9;
+int lastHpDs = 9;
+int lastHpHM = 9;
+int lastHpVH = 9;
+
 
 void decideHunterMove(HunterView hv)
 {
-
+    PlaceId *poss = malloc(maximunPlace * sizeof(PlaceId));
+    for (int i = 0; i < maximunPlace; i++) {
+        poss[i] = NOWHERE;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     int currPlayer = HvGetPlayer(hv);
     
     int round = HvGetRound(hv);
@@ -64,8 +101,38 @@ void decideHunterMove(HunterView hv)
     PlaceId LastKnown = HvGetLastKnownDraculaLocation(hv, &draLastRound);
     int pathLength;
     
+    
+    
+    int currHp = HvGetHealth(hv, currPlayer);
+    if ((round - draLastRound > 3) && currPlayer == PLAYER_LORD_GODALMING && lastHpLG - currHp > 0) {
+        LastKnown = currPlace;
+        lastHpLG = currHp;
+    }
+    
+    if ((round - draLastRound > 3) && currPlayer == PLAYER_DR_SEWARD && lastHpDs - currHp > 0) {
+        LastKnown = currPlace;
+        lastHpDs = currHp;
+    }
+    
+    if ((round - draLastRound > 3) && currPlayer == PLAYER_VAN_HELSING && lastHpVH - currHp > 0) {
+        LastKnown = currPlace;
+        lastHpVH = currHp;
+    }
+    
+    if ((round - draLastRound > 3) && currPlayer == PLAYER_MINA_HARKER && lastHpHM - currHp > 0) {
+        LastKnown = currPlace;
+        lastHpHM = currHp;
+    }
+    
+    
+    
+    
+    
+    
+    
+   
     // Rest to gain life points
-    if (HvGetHealth(hv, currPlayer) <= 3) {
+    if (HvGetHealth(hv, currPlayer) < 3) {
         return registerBestPlay(currPlaceStr, "Rest.");
     }
     
@@ -76,6 +143,7 @@ void decideHunterMove(HunterView hv)
         if (pathLength <= 1) {
             return registerBestPlay(placeIdToAbbrev(draculaLoc), "Gotcha~");
         }
+        LastKnown = draculaLoc;
     }
     
     
@@ -100,7 +168,7 @@ void decideHunterMove(HunterView hv)
             int value = random() % numReturnedLocs;
             for (i = 0; i < numReturnedLocs; i++) {
                 if (!otherHuntersNearby(hv, reachable[value], currPlayer)) {
-                    if (reachable[value] != currPlace) break;
+                    if (reachable[value] != currPlace ) break;
                 }
                 value++;
                 value = value % numReturnedLocs;
@@ -160,6 +228,17 @@ void decideHunterMove(HunterView hv)
     } else {
         int pathLength;
         if (round - draLastRound <= 10) {
+            if (round - draLastRound <= 2 && round - draLastRound > 0) {
+                search(hv, (round - draLastRound), draculaLoc, poss, currPlayer); 
+                srandom(time(NULL));
+                int num = 0;
+                while (poss[num] != NOWHERE) {
+                    num++;
+                }    
+                int value = random() % num;
+                
+                LastKnown = poss[value];  
+            }      
             // Shortest Path
             PlaceId *shortestToDracula = HvGetShortestPathTo(hv, currPlayer, LastKnown,
                              &pathLength);
@@ -274,3 +353,113 @@ static int otherHuntersNearby(HunterView hv, PlaceId currPlace, Player currPlaye
     }
     return 0;
 }
+
+
+void search(HunterView hv, int radius, PlaceId currPlace, PlaceId *poss, int currPlayer) {
+    Map new = MapNew();
+    ConnList head = MapGetConnections(new, currPlace);
+    Queue place = createQueue();
+    Queue index = createQueue();
+    enterQueue(place, currPlace);
+    enterQueue(index, radius);
+    int counter = 0;
+    int i;
+    while (head != NULL) {
+        while (place->head != NULL) {
+            PlaceId fromplace = leaveQueue(place);
+            PlaceId railcheck = leaveQueue(index);
+            
+            // Check duplicates
+            int dup = 0;
+            i = 0;
+            while (poss[i] != NOWHERE) {
+                if (poss[i] == fromplace) {
+                    dup = 1;
+                    break;
+                }
+                i++;
+            }
+            
+            if (railcheck < 0 || dup == 1) {
+                continue;
+            }
+            poss[counter] = fromplace;
+            counter++;
+            
+            // Add surrounding places into the array
+            for (ConnList curr = MapGetConnections(new, fromplace); curr != NULL; curr = curr->next) {
+                if (curr->type != RAIL && ! otherHuntersNearby(hv, curr->p, currPlayer)) {
+                    enterQueue(place, curr->p);
+                    enterQueue(index, railcheck - 1);
+                }
+            }
+        }
+        head = head->next;
+    }
+    dropQueue(place);
+    dropQueue(index);
+    return;
+}
+
+
+static ConnList createNode(Item item)
+{
+	ConnList n = malloc(sizeof(ConnList));
+	assert (n != NULL);
+	n->p = item;
+	n->next = NULL;
+	return n;
+}
+
+// create an initially empty Queue
+Queue createQueue(void)
+{
+	Queue q = malloc(sizeof(struct QueueRep));
+	assert (q != NULL);
+	q->head = NULL;
+	q->tail = NULL;
+	return q;
+}
+
+// free all memory used by the Queue
+void dropQueue(Queue q)
+{
+	ConnList curr;
+	ConnList next;
+	assert(q != NULL);
+	curr = q->head;
+	while (curr != NULL) {
+		next = curr->next;
+		curr = next;
+	}
+	free (q);
+}
+
+// add new Item to the tail of the Queue
+void enterQueue (Queue q, Item it)
+{
+	assert(q != NULL);
+	ConnList n = createNode(it);
+	if (q->head == NULL) {
+		q->head = n;
+	} else {
+	    q->tail->next = n;
+	}
+	q->tail = n;
+}
+
+// remove Item from head of Queue; return it
+Item leaveQueue (Queue q)
+{
+	assert(q != NULL);
+	Item it = q->head->p;
+	ConnList delNode = q->head;
+	q->head = q->head->next;
+	free(delNode);
+	return it;
+}
+
+
+      
+
+

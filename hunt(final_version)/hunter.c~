@@ -31,22 +31,6 @@ void decideHunterMove(HunterView hv)
     
     // When the game starts, each hunter will randomly pick a place
     if (round == 0) {
-         if (currPlayer == PLAYER_LORD_GODALMING) {
-            return registerBestPlay("CD", "I'm coming.....");
-        }
-        
-        if (currPlayer == PLAYER_DR_SEWARD) {
-            return registerBestPlay("SA", "I'm coming.....");
-        }
-        
-        if (currPlayer == PLAYER_VAN_HELSING) {
-            return registerBestPlay("RO", "I'm coming.....");
-        }
-        
-        if (currPlayer == PLAYER_MINA_HARKER) {
-            return registerBestPlay("PA", "I'm coming.....");
-        }
-        /*
         if (currPlayer == PLAYER_LORD_GODALMING) {
             return registerBestPlay("CD", "I'm coming.....");
         }
@@ -64,7 +48,7 @@ void decideHunterMove(HunterView hv)
         }
         
         return registerBestPlay(placeIdToAbbrev(randomPlace), "Random place and no other hunters here at round 0.");
-    */    
+        
     }
     
     
