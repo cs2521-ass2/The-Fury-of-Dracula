@@ -293,6 +293,11 @@ void decideDraculaMove(DraculaView dv)
             }
             registerBestPlay(placeIdToAbbrev(locations2[ToGo]), 
                 "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+/*          free(locations2);
+            free(G_reach);
+            free(S_reach);
+            free(H_reach);
+            free(M_reach);  */
             return;
         }
         // if in castle, try to move to port city or hide to gain hp
