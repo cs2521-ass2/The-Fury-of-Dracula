@@ -352,9 +352,13 @@ void decideDraculaMove(DraculaView dv)
         
         for (int i = 0; i < numReturnedLocs; i++) {     
             if(placeIdToType(locations[i]) == LAND) {
-                registerBestPlay(placeIdToAbbrev(locations[i]), 
-                    "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
-                return;
+                if (locations[i] != BERLIN && locations[i] != PRAGUE && 
+                    locations[i] != VIENNA && locations[i] != BUDAPEST) {
+                    registerBestPlay(placeIdToAbbrev(locations[i]), 
+                        "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+                    return;
+                }
+                
             }
             
         }

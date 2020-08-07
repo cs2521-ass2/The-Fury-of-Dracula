@@ -80,18 +80,9 @@ void decideDraculaMove(DraculaView dv)
         // get all possible moves of dracula and trail
         int numReturnedMoves;
         int numReturnedLocs;
-        //int numSeaLocs;
-        //int numLandLocs;
         PlaceId *moves = DvGetValidMoves(dv, &numReturnedMoves);
         PlaceId *locations = DvWhereCanIGo(dv, &numReturnedLocs);
-/*        PlaceId *locations_sea = DvWhereCanIGoByType(dv, false, true,*/
-/*                             &numSeaLocs);      */
-/*        PlaceId *locations_land = DvWhereCanIGoByType(dv, true, false,*/
-/*                             &numLandLocs);   */
-        //PlaceId *trails = draculaTrails(dv);
-        
-        //bool revealed = trail_revealed(dv);
-        //if (current_place == CASTLE_DRACULA) revealed = true;
+
         
         
         // if no possible moves
@@ -361,9 +352,13 @@ void decideDraculaMove(DraculaView dv)
         
         for (int i = 0; i < numReturnedLocs; i++) {     
             if(placeIdToType(locations[i]) == LAND) {
-                registerBestPlay(placeIdToAbbrev(locations[i]), 
-                    "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
-                return;
+                if (locations[i] != BERLIN && locations[i] != PRAGUE && 
+                    locations[i] != VIENNA && locations[i] != BUDAPEST) {
+                    registerBestPlay(placeIdToAbbrev(locations[i]), 
+                        "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+                    return;
+                }
+                
             }
             
         }
