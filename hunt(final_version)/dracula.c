@@ -80,18 +80,9 @@ void decideDraculaMove(DraculaView dv)
         // get all possible moves of dracula and trail
         int numReturnedMoves;
         int numReturnedLocs;
-        //int numSeaLocs;
-        //int numLandLocs;
         PlaceId *moves = DvGetValidMoves(dv, &numReturnedMoves);
         PlaceId *locations = DvWhereCanIGo(dv, &numReturnedLocs);
-/*        PlaceId *locations_sea = DvWhereCanIGoByType(dv, false, true,*/
-/*                             &numSeaLocs);      */
-/*        PlaceId *locations_land = DvWhereCanIGoByType(dv, true, false,*/
-/*                             &numLandLocs);   */
-        //PlaceId *trails = draculaTrails(dv);
-        
-        //bool revealed = trail_revealed(dv);
-        //if (current_place == CASTLE_DRACULA) revealed = true;
+
         
         
         // if no possible moves
@@ -142,7 +133,7 @@ void decideDraculaMove(DraculaView dv)
         }
         
         if (numReturnedLocs == 0) {
-            if (numReturnedMoves != 0 /*&& !revealed*/) {
+            if (numReturnedMoves != 0 ) {
                 // only hide or double back available      
                 // if the hunters don't find the trail
                 srandom(time(NULL));
@@ -341,23 +332,14 @@ void decideDraculaMove(DraculaView dv)
             
         }
       
-/*        // if the trail is revealed, try to move to the sea*/
-/*        if (revealed && numSeaLocs != 0 && DvGetHealth(dv, PLAYER_DRACULA) > 10) {*/
-/*            srandom(time(NULL));*/
-/*            registerBestPlay(placeIdToAbbrev(locations_sea[random() % numSeaLocs]), */
-/*                "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");*/
-/*            return;*/
-/*        }*/
 
-        // if the trail is not revealed, try to move on the land
-/*        if (numLandLocs != 0) {*/
-/*            srandom(time(NULL));*/
-/*            registerBestPlay(placeIdToAbbrev(locations_land[random() % numLandLocs]), */
-/*                "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");*/
-/*            return;*/
-/*        }*/
-        
         // generate a random place from possible locations
+        for (int i = 0; i < numReturnedLocs; i++) {
+            if (locations[i] == CASTLE_DRACULA) {
+                registerBestPlay("CD", "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+                return;
+            }
+        }
         for (int i = 0; i < numReturnedLocs; i++) {
             for (int j = 0; j < 29; j++) {
                 if(locations[i] == port_city[j]) {
@@ -497,143 +479,6 @@ static PlaceId *hunterPossiblePlaces(DraculaView dv, int *possible_places) {
     }
     return places;
 }
-
-
-/*// trails of dracula*/
-/*static PlaceId *draculaTrails(DraculaView dv) {*/
-
-/*    */
-/*    // add vampire location*/
-/*    if (DvGetVampireLocation(dv) != NOWHERE) {*/
-/*        trails[0] = DvGetVampireLocation(dv);*/
-/*    }*/
-/*    int numTraps;*/
-/*    PlaceId *traps = DvGetTrapLocations(dv, &numTraps);  */
-/*    // add or trap locations to trail*/
-/*    for (int i = 0; i < numTraps; i++) {*/
-/*        bool exist = false;*/
-/*        int j = 0;*/
-/*        */
-/*        for (j = 0; trails[j] != NOWHERE && j < 6; j++) {*/
-/*            if (traps[i] == trails[j]) {*/
-/*                exist = true;*/
-/*                break;*/
-/*            }*/
-/*        }*/
-/*        if (!exist) {*/
-/*            trails[j] = traps[i];*/
-/*        }*/
-/*    }*/
-/*    free(traps);*/
-/*    return trails;*/
-/*}*/
-
-
-// check if trail is revealed
-/*static bool trail_revealed(DraculaView dv) {*/
-/*    int numTrails = 0;*/
-/*    if (DvGetVampireLocation(dv) != NOWHERE) */
-/*        numTrails++;*/
-/*    int numTraps;*/
-/*    PlaceId *traps = DvGetTrapLocations(dv, &numTraps);  */
-/*    free(traps);*/
-/*    Round current_round = DvGetRound(dv);*/
-/*    numTrails += numTraps;*/
-/*    if (current_round < 6) {*/
-/*        if (numTrails < current_round) */
-/*            return true;*/
-/*        else*/
-/*            return false;*/
-/*    } else {*/
-/*        if (numTrails < 6) */
-/*            return true;*/
-/*        else*/
-/*            return false;*/
-/*    }   */
-/*}*/
-
-
-
-
-
-/*PlaceId *GetShortestPathTo(DraculaView dv,PlaceId dest, int *pathLength)*/
-/*{*/
-/*    PlaceId source = DvGetPlayerLocation(, hunter);*/
-/*    Round tmp_round = HvGetRound(hv);*/
-/*    int tmp_returnedLocs = 0;*/
-/*    bool found = false;*/
-/*    */
-/*    // use bfs to tranverse the graph*/
-/*    struct Queue* bfs = NewQueue(NUM_REAL_PLACES);*/
-/*    // array of predecessors.*/
-/*    PlaceId Pred[NUM_REAL_PLACES]; */
-/*    for(int i = 0; i < NUM_REAL_PLACES; i++)*/
-/*        Pred[i] = NOWHERE;*/
-/*    */
-/*    Pred[source] = source;*/
-/*    enqueue(bfs, source);*/
-/*    // save the round of the source node*/
-/*    Round save = tmp_round;*/
-/*    while (!isEmpty(bfs) && found == false) {*/
-/*        PlaceId head = dequeue(bfs);*/
-/*        // level means the pathlength from the head to the source*/
-/*        int level = 0;*/
-/*        PlaceId current = head;*/
-/*        while (current != source) {*/
-/*            level++;*/
-/*            current = Pred[current];*/
-/*        }*/
-/*        tmp_round += level;     */
-/*        if (head == dest) {*/
-/*            found = true;*/
-/*        } else {*/
-/*            // all the reachable locations*/
-/*            PlaceId *to_enqueue = GvGetReachable(hv->gv, hunter, tmp_round,*/
-/*                head, &tmp_returnedLocs);*/
-/*            for (int i = 0; i < tmp_returnedLocs; i++){*/
-/*                if (Pred[to_enqueue[i]] == NOWHERE) {*/
-/*                    // add to the queue and link*/
-/*                    enqueue(bfs, to_enqueue[i]);*/
-/*                    Pred[to_enqueue[i]] = head;*/
-/*                }*/
-/*            }*/
-/*            free(to_enqueue);*/
-/*        }*/
-/*        tmp_round = save;*/
-/*    }*/
-/*    dropHunterQueue(bfs);*/
-/*    */
-/*    if (found) {*/
-/*        // calculate the pathLength*/
-/*        int count = 0;*/
-/*        PlaceId i = dest;*/
-/*        while (i != NOWHERE && i != source) {*/
-/*            count++;*/
-/*            i = Pred[i];*/
-/*        }  */
-/*        i = dest;*/
-/*        int j = count - 1;*/
-/*        *pathLength = count;*/
-/*        // store the shortest path*/
-/*        PlaceId *path = malloc(NUM_REAL_PLACES * sizeof(PlaceId));*/
-/*        while (j >= 0 && i != source) {*/
-/*            path[j] = i;*/
-/*            i = Pred[i];*/
-/*            j--;*/
-/*        }*/
-/*        return path;*/
-/*    } else {*/
-/*        // not found*/
-/*        *pathLength = 0;*/
-/*        return NULL;*/
-/*    }*/
-/*}*/
-
-
-
-
-
-
 
 
 
