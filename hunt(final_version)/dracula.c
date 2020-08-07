@@ -62,7 +62,7 @@ void decideDraculaMove(DraculaView dv)
                 initial_places[numMoves++] = i;
                 // if castle is safe, go to castle directly
                 if (i == CASTLE_DRACULA) {
-                    registerBestPlay(placeIdToAbbrev(i), "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+                    registerBestPlay(placeIdToAbbrev(i), "MY name is ALEX!!!!!");
                     free(dangerousPlaces);
                     return;
                 }
@@ -71,7 +71,7 @@ void decideDraculaMove(DraculaView dv)
         // generate a random place from initial_places
         srandom(time(NULL));
         registerBestPlay(placeIdToAbbrev(initial_places[random() % numMoves]), 
-            "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+            "I AM ALEX, I AM A GENIUS");
         free(dangerousPlaces);
         return;
     } else {

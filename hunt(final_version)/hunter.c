@@ -53,6 +53,7 @@ void decideHunterMove(HunterView hv)
         poss[i] = NOWHERE;
     }
     
+    
     int currPlayer = HvGetPlayer(hv);
     
     int round = HvGetRound(hv);
@@ -116,12 +117,6 @@ void decideHunterMove(HunterView hv)
         lastHpHM = currHp;
     }
     
-    
-    
-    
-    
-    
-    
    
     // Rest to gain life points
     if (HvGetHealth(hv, currPlayer) < 3) {
@@ -130,6 +125,11 @@ void decideHunterMove(HunterView hv)
     
     // If Dracula is only one move away and it is revealed, go to that place
     PlaceId draculaLoc = HvGetPlayerLocation(hv, PLAYER_DRACULA);
+    if (draculaLoc == SEA_UNKNOWN) {
+        return registerBestPlay(currPlaceStr, "Rest.");
+    }
+    
+    
     if (draculaLoc != CITY_UNKNOWN && draculaLoc != SEA_UNKNOWN && draculaLoc != NOWHERE) {
         HvGetShortestPathTo(hv, currPlayer, draculaLoc, &pathLength);
         if (pathLength <= 1) {
@@ -151,27 +151,30 @@ void decideHunterMove(HunterView hv)
             return registerBestPlay(currPlaceStr, "Rest.");
         }
         
-        if (pathLength > 2) {
-            return registerBestPlay(placeIdToAbbrev(shortestToCD[0]), "Back to CD.");
-        } else {
-            // Random Place
-            int i;
-            srandom(time(NULL));
-            int value = random() % numReturnedLocs;
-            for (i = 0; i < numReturnedLocs; i++) {
-                if (!otherHuntersNearby(hv, reachable[value], currPlayer)) {
-                    if (reachable[value] != currPlace ) break;
-                }
-                value++;
-                value = value % numReturnedLocs;
-            }
-
-            if (i == numReturnedLocs) {
-                return registerBestPlay(placeIdToAbbrev(reachable[randomIndex]), "Next random place.");
-            } else {
-                return registerBestPlay(placeIdToAbbrev(reachable[value]), "To somewhere don't have a hunter.");
-            }
+        // If tp to hospital
+        if (currPlace != placeAbbrevToId("KL") && currPlace != placeAbbrevToId("CD") && currPlace != placeAbbrevToId("GA")) {
+            return registerBestPlay(placeIdToAbbrev(shortestToCD[0]), "Mwahahahahaha");
         }
+        
+        
+        // If hp less than 9
+        if (currHp < 9) {
+            return registerBestPlay(currPlaceStr, "LG is resting because he's dying 9>_<9.");
+        }
+        
+        
+        if (currPlace == placeAbbrevToId("KL")) {
+            return registerBestPlay("CD", "I'm watching u~");
+        }
+        
+        if (currPlace == placeAbbrevToId("CD")) {
+            return registerBestPlay("GA", "I'm watching u~");
+        }
+        
+        if (currPlace == placeAbbrevToId("GA")) {
+            return registerBestPlay("KL", "I'm watching u~");
+        }
+        
     }
 
 
@@ -221,20 +224,19 @@ void decideHunterMove(HunterView hv)
         int pathLength;
         if (round - draLastRound <= 10) {
             if (round - draLastRound <= 2 && round - draLastRound > 0) {
-                search(hv, (round - draLastRound), draculaLoc, poss, currPlayer); 
-                srandom(time(NULL));
+                search(hv, (round - draLastRound), LastKnown, poss, currPlayer); 
+                
                 int num = 0;
                 while (poss[num] != NOWHERE) {
                     num++;
-                }    
+                }   
+                srandom(time(NULL)); 
                 int value = random() % num;
-                
                 LastKnown = poss[value];  
             }      
             // Shortest Path
             PlaceId *shortestToDracula = HvGetShortestPathTo(hv, currPlayer, LastKnown,
                              &pathLength);
-            
             if (pathLength == 0) {
                
                 // Random Place
