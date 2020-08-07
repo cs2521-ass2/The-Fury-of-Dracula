@@ -53,14 +53,6 @@ void decideHunterMove(HunterView hv)
         poss[i] = NOWHERE;
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
     int currPlayer = HvGetPlayer(hv);
     
     int round = HvGetRound(hv);
