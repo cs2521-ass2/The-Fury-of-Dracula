@@ -133,14 +133,14 @@ void decideDraculaMove(DraculaView dv)
         }
         
         if (numReturnedLocs == 0) {
-            if (numReturnedMoves != 0 ) {
-                // only hide or double back available      
-                // if the hunters don't find the trail
-                srandom(time(NULL));
-                registerBestPlay(placeIdToAbbrev(moves[random() % numReturnedMoves]), 
-                    "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
-                return;
-            }
+/*            if (numReturnedMoves != 0 ) {*/
+/*                // only hide or double back available      */
+/*                // if the hunters don't find the trail*/
+/*                srandom(time(NULL));*/
+/*                registerBestPlay(placeIdToAbbrev(moves[random() % numReturnedMoves]), */
+/*                    "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");*/
+/*                return;*/
+/*            }*/
          
             int numGo;  
             PlaceId *locations2 = DvWhereCanIGo(dv, &numGo);
