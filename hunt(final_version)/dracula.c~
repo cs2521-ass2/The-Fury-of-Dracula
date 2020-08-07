@@ -93,6 +93,22 @@ void decideDraculaMove(DraculaView dv)
         
         // only hide or double back available
         if (numReturnedLocs == 0) {
+            dangerous = false;
+            for (int j = 0; j < possible_places; j++) {
+                if (current_place == dangerousPlaces[j]) {
+                    dangerous = true;
+                    break;
+                }
+            }
+            for (int j = 0; j < numReturnedMoves;) {
+                if ((moves[j] == HIDE | moves[j] == DOUBLE_BACK_1) && dangerous) {
+                    j++;
+                    continue;
+                }
+                registerBestPlay(placeIdToAbbrev(moves[j]), 
+                    "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+                return;
+            }
             srandom(time(NULL));
             registerBestPlay(placeIdToAbbrev(moves[random() % numReturnedMoves]), 
                 "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
@@ -133,13 +149,27 @@ void decideDraculaMove(DraculaView dv)
         }
         
         if (numReturnedLocs == 0) {
+            // only hide or double back available  
             if (numReturnedMoves != 0 ) {
-                // only hide or double back available      
-                // if the hunters don't find the trail
-                srandom(time(NULL));
-                registerBestPlay(placeIdToAbbrev(moves[random() % numReturnedMoves]), 
-                    "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
-                return;
+                dangerous = false;
+                for (int j = 0; j < possible_places; j++) {
+                    if (current_place == dangerousPlaces[j]) {
+                        dangerous = true;
+                        break;
+                    }
+                }
+                for (int j = 0; j < numReturnedMoves;) {
+                    if (moves[j] == DOUBLE_BACK_1 && dangerous) {
+                        j++;
+                        continue;
+                    } else if (moves[j] == HIDE && dangerous) {
+                        j++;
+                        continue;    
+                    }
+                    registerBestPlay(placeIdToAbbrev(moves[j]), 
+                        "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+                    return;
+                }
             }
          
             int numGo;  
