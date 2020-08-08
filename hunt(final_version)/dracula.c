@@ -343,27 +343,13 @@ void decideDraculaMove(DraculaView dv)
                 registerBestPlay("GA", 
                     "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
                 return;
-            }
-            srandom(time(NULL));
-            registerBestPlay(placeIdToAbbrev(locations[random() % numReturnedLocs]), 
+            }         
+            registerBestPlay("KL", 
                 "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
             return;
         }
-        // try to move to port city
-        if (current_place == GALATZ) {
-            for (int i = 0; i < numReturnedMoves; i++) {
-                if (moves[i] == CONSTANTA) {
-                    registerBestPlay("CN", 
-                        "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
-                    return;
-                }
-            }
-            srandom(time(NULL));
-            registerBestPlay(placeIdToAbbrev(locations[random() % numReturnedLocs]), 
-                "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
-            return; 
-            
-        }
+        
+        
       
 
         // generate a random place from possible locations
@@ -373,6 +359,7 @@ void decideDraculaMove(DraculaView dv)
                 return;
             }
         }
+        // try to move to port city
         for (int i = 0; i < numReturnedLocs; i++) {
             for (int j = 0; j < 29; j++) {
                 if(locations[i] == port_city[j]) {
@@ -381,6 +368,53 @@ void decideDraculaMove(DraculaView dv)
                     return;
                 }
             }
+        }
+        
+        
+        if (current_place == KLAUSENBURG) {
+            for (int i = 0; i < numReturnedLocs; i++) {
+                if (locations[i] == BUCHAREST) {
+                    registerBestPlay("BC", 
+                        "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+                    return;
+                }
+                if (locations[i] == GALATZ) {
+                    registerBestPlay("GA", 
+                        "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+                    return;
+                }
+            }
+            
+        }
+        if (current_place == SZEGED) {
+            for (int i = 0; i < numReturnedLocs; i++) {
+                if (locations[i] == KLAUSENBURG) {
+                    registerBestPlay("KL", 
+                        "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+                    return;
+                }
+            }
+            
+        }
+        if (current_place == BELGRADE) {
+            for (int i = 0; i < numReturnedLocs; i++) {
+                if (locations[i] == KLAUSENBURG) {
+                    registerBestPlay("KL", 
+                        "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+                    return;
+                }
+            }
+            
+        }
+        if (current_place == BUDAPEST) {
+            for (int i = 0; i < numReturnedLocs; i++) {
+                if (locations[i] == KLAUSENBURG) {
+                    registerBestPlay("KL", 
+                        "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+                    return;
+                }
+            }
+            
         }
         
         for (int i = 0; i < numReturnedLocs; i++) {     
