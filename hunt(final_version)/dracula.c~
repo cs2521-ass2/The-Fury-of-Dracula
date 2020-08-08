@@ -137,7 +137,7 @@ void decideDraculaMove(DraculaView dv)
                 }
             }
             // add boolean function to see if double back 1 is available.
-            int DB_1 = false;
+            bool DB_1 = false;
             for (int z = 0; z < numReturnedMoves; z++){ 
                 if (moves[z] == DOUBLE_BACK_1) {
                     DB_1 = true;
