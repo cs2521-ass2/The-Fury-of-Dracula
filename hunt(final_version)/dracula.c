@@ -31,6 +31,17 @@ void decideDraculaMove(DraculaView dv)
         MARSEILLES, BARCELONA, ALICANTE, CADIZ, LISBON, SANTANDER, 
         BORDEAUX, NANTES, LE_HAVRE, PLYMOUTH, LONDON, SWANSEA, 
         LIVERPOOL, EDINBURGH, DUBLIN, GALWAY};
+        
+    // list of places where if 3 or more hunters are at, do not commence
+    // castle entrap to gain HP.
+   /* PlaceId safe_entrap[20] = {KLAUSENBURG, CASTLE_DRACULA, GALATZ, 
+        CONSTANTA, BLACK_SEA, VARNA, SOFIA, SZEGED, BELGRADE, BUCHAREST,
+        SALONICA, VALONA, IONIAN_SEA, SARAJEVO, ST_JOSEPH_AND_ST_MARY, 
+        VIENNA, ZAGREB, BUDAPEST, PRAGUE, VENICE};   */ 
+    // list of places near CD
+  /*  PlaceId safe_dbCD[8] = {KLAUSENBURG, CASTLE_DRACULA, GALATZ, 
+        BUCHAREST, SOFIA, CONSTANTA, BLACK_SEA, VARNA};  */
+        
     Round current_round = DvGetRound(dv);
     PlaceId current_place = DvGetPlayerLocation(dv, PLAYER_DRACULA);
     // get all the dangerousPlaces that hunters can possibly go to
@@ -110,7 +121,150 @@ void decideDraculaMove(DraculaView dv)
             free(moves);
             free(locations);
             return;           
+        } 
+     
+        
+  /*      if (current_place == KLAUSENBURG) {
+            PlaceId G_place = DvGetPlayerLocation(dv, PLAYER_LORD_GODALMING);
+            PlaceId S_place = DvGetPlayerLocation(dv, PLAYER_DR_SEWARD);
+            PlaceId H_place = DvGetPlayerLocation(dv, PLAYER_VAN_HELSING);
+            PlaceId M_place = DvGetPlayerLocation(dv, PLAYER_MINA_HARKER);
+            bool farCastle = true;
+            for (int i=0; i<8; i++) {
+                if (safe_dbCD[i] == G_place || safe_dbCD[i] == S_place ||
+                    safe_dbCD[i] == H_place || safe_dbCD[i] == M_place) {
+                    farCastle = false;
+                }
+            }
+            // add boolean function to see if double back 1 is available.
+            int DB_1 = false;
+            for (int z = 0; z < numReturnedMoves; z++){ 
+                if (moves[z] == DOUBLE_BACK_1) {
+                    DB_1 = true;
+                }
+            }      
+                //check if can go GA but cannot go CD:
+            bool GA_available = false;
+            bool CD_in_trail = true;
+            for (int i=0;locations[i]<NUM_REAL_PLACES && locations[i] != NOWHERE; i++) {
+                if (locations[i] == CASTLE_DRACULA) {
+                    CD_in_trail = false;
+                }
+                if (locations[i] == GALATZ) {
+                    GA_available = true;
+                }
+            }
+            if (DB_1 == true && farCastle == true 
+                && CD_in_trail == true && GA_available == true) {
+                registerBestPlay("D1", 
+                    "HPPHPHPHPHPHPHPHPHPHPHPHPHP\nWRYYYYYYYY!");
+                return;
+            }
+        } */
+        
+     /*   if (current_place == CASTLE_DRACULA) {
+            for (int z = 0; z < numReturnedMoves; z++) {
+                if (moves[z] == HIDE) {
+                    registerBestPlay("HI", "IT WAS I, DIO!\nWRYYYYY!");
+                    return;
+                }
+            }
+        } */
+        // If curr_loc is KL/GA, and there are 3 or more hunters 
+        // 6 moves away from CD, can begin health harvesting.
+ /*       if (current_place == KLAUSENBURG && 
+            DvGetHealth(dv, PLAYER_DRACULA) >= 10) { //change to HP >= 20?
+            bool galatz = false;
+            bool castle = false;
+            for (int i=0; locations[i] != NOWHERE && locations[i] 
+                < NUM_REAL_PLACES; i++) {
+                if (locations[i] == GALATZ) {
+                    galatz = true;
+                }
+                if (locations[i] == CASTLE_DRACULA) {
+                    castle = true;
+                }
+            }
+            // check if there are at least 3 hunters outside safe_entrap:
+            // get current location of hunters
+            PlaceId G_loc = DvGetPlayerLocation(dv, PLAYER_LORD_GODALMING);
+            PlaceId S_loc = DvGetPlayerLocation(dv, PLAYER_DR_SEWARD);
+            PlaceId H_loc = DvGetPlayerLocation(dv, PLAYER_VAN_HELSING);
+            PlaceId M_loc = DvGetPlayerLocation(dv, PLAYER_MINA_HARKER);
+            // count to store # of players within 6 moves reach of CD
+            int count = 0;
+            for (int i=0; i<20; i++) {
+                if (G_loc == safe_entrap[i] || S_loc == safe_entrap[i]
+                    || H_loc == safe_entrap[i] || M_loc == safe_entrap[i]) {
+                    count += 1;
+                }
+            }                                                          
+            if (galatz == true && castle == true && count <= 1) {
+                registerBestPlay("GA", 
+                    "______________________________\nWRYYYYYYYY!");
+                return;
+            } 
+        }                                                
+        if (current_place == GALATZ && 
+            DvGetHealth(dv, PLAYER_DRACULA) >= 10) {
+            bool klausenberg = false;
+            bool castle = false;
+            for (int i=0; locations[i] != NOWHERE && locations[i] 
+                < NUM_REAL_PLACES; i++) {
+                if (locations[i] == KLAUSENBURG) {
+                    klausenberg = true;
+                }
+                if (locations[i] == CASTLE_DRACULA) {
+                    castle = true;
+                }
+            }
+            // check if there are at least 3 hunters outside safe_entrap:
+            // get current health of hunters
+            // get current location of hunters
+            PlaceId G_loc = DvGetPlayerLocation(dv, PLAYER_LORD_GODALMING);
+            PlaceId S_loc = DvGetPlayerLocation(dv, PLAYER_DR_SEWARD);
+            PlaceId H_loc = DvGetPlayerLocation(dv, PLAYER_VAN_HELSING);
+            PlaceId M_loc = DvGetPlayerLocation(dv, PLAYER_MINA_HARKER);
+            // count to store # of players within 6 moves reach of CD
+            int count = 0;
+            for (int i=0; i<20; i++) {
+                if (G_loc == safe_entrap[i] || S_loc == safe_entrap[i]
+                    || H_loc == safe_entrap[i] || M_loc == safe_entrap[i]) {
+                    count += 1;
+                }
+            }                                                          
+            if (klausenberg == true && castle == true && count <= 1) {
+                registerBestPlay("KL", 
+                    "______________________________________\nWRYYYYYYYY!");
+                return;
+            } 
         }       
+        
+        if (current_place == GALATZ || current_place == KLAUSENBURG) {
+            bool castle = false;
+            for (int i=0; locations[i] != NOWHERE && locations[i] 
+               < NUM_REAL_PLACES; i++) {
+               if (locations[i] == CASTLE_DRACULA) {
+                   castle = true;
+               }
+           }
+           if (castle == true) {
+               bool danger_castle = false;
+               for (int i=0; dangerousPlaces[i] != NOWHERE && 
+                dangerousPlaces[i] < NUM_REAL_PLACES; i++) {
+                   if (dangerousPlaces[i] == CASTLE_DRACULA) {
+                       danger_castle = true;   
+                   }
+               }
+               if (danger_castle == false) {
+                   registerBestPlay("CD", 
+                       "________________________________\nWRYYYYYYYY!");
+                   return;
+               }
+            }
+        } */    
+        
+            
         // remove dangerous places from possible moves
         int i = 0;
         while (i < numReturnedLocs) {
@@ -344,9 +498,9 @@ void decideDraculaMove(DraculaView dv)
             free(M_reach);  
             return;
         }
+ 
         // if in castle, try to move to port city or hide to gain hp
-        if (current_place == CASTLE_DRACULA) {
-            
+        if (current_place == CASTLE_DRACULA) {           
             bool galgatz = false;
             for (int i = 0; i < numReturnedMoves; i++) {
                 if (moves[i] == GALATZ) {
@@ -368,7 +522,7 @@ void decideDraculaMove(DraculaView dv)
         }
         
         
-      
+       
         // try to move to castle 
         for (int i = 0; i < numReturnedLocs; i++) {
             if (locations[i] == CASTLE_DRACULA) {
@@ -379,7 +533,7 @@ void decideDraculaMove(DraculaView dv)
                 free(locations);
                 return;
             }
-        }
+        } 
         
         // try to move to port city
         for (int i = 0; i < numReturnedLocs; i++) {
@@ -416,7 +570,7 @@ void decideDraculaMove(DraculaView dv)
                 }
             }
             
-        }
+        }  
         // try to move close to castle
         if (current_place == SZEGED) {
             for (int i = 0; i < numReturnedLocs; i++) {
@@ -430,7 +584,7 @@ void decideDraculaMove(DraculaView dv)
                 }
             }
             
-        }
+        } 
         // try to move close to castle
         if (current_place == BELGRADE) {
             for (int i = 0; i < numReturnedLocs; i++) {
@@ -458,7 +612,7 @@ void decideDraculaMove(DraculaView dv)
                 }
             }
             
-        }
+        } 
         // go to a land location where there are more roads to escape
         for (int i = 0; i < numReturnedLocs; i++) {     
             if(placeIdToType(locations[i]) == LAND) {
@@ -596,6 +750,60 @@ static PlaceId *hunterPossiblePlaces(DraculaView dv, int *possible_places) {
             *possible_places += 1;
         }
     }
+    
+    // If a hunter has 0 health, set hospital nearby as dangerous.
+    int G_health = DvGetHealth(dv, PLAYER_LORD_GODALMING);
+    int S_health = DvGetHealth(dv, PLAYER_DR_SEWARD);
+    int H_health = DvGetHealth(dv, PLAYER_VAN_HELSING);
+    int M_health = DvGetHealth(dv, PLAYER_MINA_HARKER);
+    
+    if (G_health == 0 || S_health == 0 || H_health == 0 || M_health == 0) {
+        int y=0;
+        for (y=0; places[y] != NOWHERE && y < NUM_REAL_PLACES; y++) {
+            if (places[y] == SARAJEVO) {
+                exist = true;
+                break;
+            }
+        }
+        if (!exist) {
+            places[y] = SARAJEVO;
+            *possible_places += 1;
+        }
+        
+        for (int y=0; places[y] != NOWHERE && y < NUM_REAL_PLACES; y++) {
+            if (places[y] == SZEGED) {
+                exist = true;
+                break;
+            }
+        }
+        if (!exist) {
+            places[y] = SZEGED;
+            *possible_places += 1;
+        }
+        
+        for (y=0; places[y] != NOWHERE && y < NUM_REAL_PLACES; y++) {
+            if (places[y] == ZAGREB) {
+                exist = true;
+                break;
+            }
+        }
+        if (!exist) {
+            places[y] = ZAGREB;
+            *possible_places += 1;
+        }
+        
+        for (y=0; places[y] != NOWHERE && y < NUM_REAL_PLACES; y++) {
+            if (places[y] == BELGRADE) {
+                exist = true;
+                break;
+            }
+        }
+        if (!exist) {
+            places[y] = BELGRADE;
+            *possible_places += 1;
+        }
+    }
+        
     return places;
 }
 
