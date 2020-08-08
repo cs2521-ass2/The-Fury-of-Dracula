@@ -37,22 +37,9 @@ void decideDraculaMove(DraculaView dv)
     int possible_places = 0;
     PlaceId *dangerousPlaces = hunterPossiblePlaces(dv, &possible_places);
     bool dangerous;
-    bool safe_castle = true;
-    // check if castle safe or not
-    for (int i = 0; i < possible_places; i++) {
-        if (dangerousPlaces[i] == CASTLE_DRACULA) {
-            safe_castle = false;
-            break;
-        }         
-    }
+
     // the first round
     if (current_round == 0) {
-        // if castle is safe, go to castle directly
-        if (safe_castle) {
-            registerBestPlay("CD", "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
-            free(dangerousPlaces);
-            return;
-        }
         // initialize
         PlaceId initial_places[29] = {0};
         // add all safe port places to initial_places
@@ -362,14 +349,6 @@ void decideDraculaMove(DraculaView dv)
             
             bool galgatz = false;
             for (int i = 0; i < numReturnedMoves; i++) {
-                if (moves[i] == HIDE && safe_castle) {
-                    registerBestPlay("HI", 
-                        "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
-                    free(dangerousPlaces);
-                    free(moves);
-                    free(locations);
-                    return;
-                }
                 if (moves[i] == GALATZ) {
                     galgatz = true;
                 }

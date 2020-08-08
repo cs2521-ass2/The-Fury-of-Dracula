@@ -47,12 +47,6 @@ void decideDraculaMove(DraculaView dv)
     }
     // the first round
     if (current_round == 0) {
-        // if castle is safe, go to castle directly
-        if (safe_castle) {
-            registerBestPlay("CD", "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
-            free(dangerousPlaces);
-            return;
-        }
         // initialize
         PlaceId initial_places[29] = {0};
         // add all safe port places to initial_places
@@ -162,7 +156,7 @@ void decideDraculaMove(DraculaView dv)
         // check if only sea available
         bool only_sea = true;
         for (int i = 0; i < numReturnedLocs; i++) {
-            if (placeIdToType(locations[i]) == LAND))
+            if (placeIdToType(locations[i]) == LAND)
                 only_sea = false;
         }
         
@@ -362,14 +356,6 @@ void decideDraculaMove(DraculaView dv)
             
             bool galgatz = false;
             for (int i = 0; i < numReturnedMoves; i++) {
-                if (moves[i] == HIDE && safe_castle) {
-                    registerBestPlay("HI", 
-                        "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
-                    free(dangerousPlaces);
-                    free(moves);
-                    free(locations);
-                    return;
-                }
                 if (moves[i] == GALATZ) {
                     galgatz = true;
                 }
