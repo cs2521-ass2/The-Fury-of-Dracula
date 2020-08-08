@@ -158,8 +158,18 @@ void decideDraculaMove(DraculaView dv)
                 i++;
             }
         }
+        
+        // check if only sea available
+        bool only_sea = true;
+        for (int i = 0; i < numReturnedLocs; i++) {
+            if (placeIdToType(locations[i]) == LAND)
+                only_sea = false;
+        }
+        
+        
         // if no safe places available
-        if (numReturnedLocs == 0) {
+        if (numReturnedLocs == 0 || 
+            (DvGetHealth(dv, PLAYER_DRACULA) <= 2 && only_sea)) {
             // if hide or double back available  
             if (numReturnedMoves != 0 ) {
                 // check whether current_place safe or not

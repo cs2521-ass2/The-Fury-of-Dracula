@@ -116,7 +116,8 @@ void decideDraculaMove(DraculaView dv)
                 return;
             }
             srandom(time(NULL));
-            registerBestPlay(placeIdToAbbrev(moves[random() % numReturnedMoves]), 
+            registerBestPlay(placeIdToAbbrev(moves[random() % 
+                numReturnedMoves]), 
                 "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
             free(dangerousPlaces);
             free(moves);
@@ -157,8 +158,18 @@ void decideDraculaMove(DraculaView dv)
                 i++;
             }
         }
+        
+        // check if only sea available
+        bool only_sea = true;
+        for (int i = 0; i < numReturnedLocs; i++) {
+            if (placeIdToType(locations[i]) == LAND))
+                only_sea = false;
+        }
+        
+        
         // if no safe places available
-        if (numReturnedLocs == 0) {
+        if (numReturnedLocs == 0 || 
+            (DvGetHealth(dv, PLAYER_DRACULA) <= 2 && only_sea)) {
             // if hide or double back available  
             if (numReturnedMoves != 0 ) {
                 // check whether current_place safe or not
@@ -189,13 +200,17 @@ void decideDraculaMove(DraculaView dv)
             int numGo;  
             PlaceId *locations2 = DvWhereCanIGo(dv, &numGo);
             int numGreach;
-            PlaceId *G_reach = DvWhereCanTheyGo(dv, PLAYER_LORD_GODALMING, &numGreach);
+            PlaceId *G_reach = DvWhereCanTheyGo(dv, PLAYER_LORD_GODALMING, 
+                &numGreach);
             int numSreach;
-            PlaceId *S_reach = DvWhereCanTheyGo(dv, PLAYER_DR_SEWARD, &numSreach);
+            PlaceId *S_reach = DvWhereCanTheyGo(dv, PLAYER_DR_SEWARD, 
+                &numSreach);
             int numHreach;
-            PlaceId *H_reach = DvWhereCanTheyGo(dv, PLAYER_VAN_HELSING, &numHreach);
+            PlaceId *H_reach = DvWhereCanTheyGo(dv, PLAYER_VAN_HELSING, 
+                &numHreach);
             int numMreach;
-            PlaceId *M_reach = DvWhereCanTheyGo(dv, PLAYER_MINA_HARKER, &numMreach);
+            PlaceId *M_reach = DvWhereCanTheyGo(dv, PLAYER_MINA_HARKER, 
+                &numMreach);
             
             //intersections array to store the number of intersections of paths
             int intersections[numGo];
@@ -221,7 +236,8 @@ void decideDraculaMove(DraculaView dv)
             }
             
             for (int i = 0; i < numGo; i++) {
-                if (locations2[i] == DvGetPlayerLocation(dv, PLAYER_LORD_GODALMING)) {
+                if (locations2[i] == DvGetPlayerLocation(dv, 
+                    PLAYER_LORD_GODALMING)) {
                     intersections[i] += 1;
                     int HP = DvGetHealth(dv, PLAYER_LORD_GODALMING);
                     // if there are more than 1 lowest-intersections, 
@@ -230,7 +246,8 @@ void decideDraculaMove(DraculaView dv)
                         lowestHP[i] = HP; 
                     }
                 }
-                if (locations2[i] == DvGetPlayerLocation(dv, PLAYER_DR_SEWARD)) {
+                if (locations2[i] == DvGetPlayerLocation(dv, 
+                    PLAYER_DR_SEWARD)) {
                     intersections[i] += 1;
                     int HP = DvGetHealth(dv, PLAYER_DR_SEWARD);
                     // if there are more than 1 lowest-intersections, 
@@ -239,7 +256,8 @@ void decideDraculaMove(DraculaView dv)
                         lowestHP[i] = HP; 
                     }
                 }
-                if (locations2[i] == DvGetPlayerLocation(dv, PLAYER_VAN_HELSING)) {
+                if (locations2[i] == DvGetPlayerLocation(dv, 
+                    PLAYER_VAN_HELSING)) {
                     intersections[i] += 1;
                     int HP = DvGetHealth(dv, PLAYER_VAN_HELSING);
                     // if there are more than 1 lowest-intersections, 
@@ -248,7 +266,8 @@ void decideDraculaMove(DraculaView dv)
                         lowestHP[i] = HP; 
                     }
                 }
-                if (locations2[i] == DvGetPlayerLocation(dv, PLAYER_MINA_HARKER)) {
+                if (locations2[i] == DvGetPlayerLocation(dv, 
+                    PLAYER_MINA_HARKER)) {
                     intersections[i] += 1;
                     int HP = DvGetHealth(dv, PLAYER_MINA_HARKER);
                     // if there are more than 1 lowest-intersections, 
@@ -374,7 +393,8 @@ void decideDraculaMove(DraculaView dv)
         // try to move to castle 
         for (int i = 0; i < numReturnedLocs; i++) {
             if (locations[i] == CASTLE_DRACULA) {
-                registerBestPlay("CD", "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+                registerBestPlay("CD", 
+                    "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
                 free(dangerousPlaces);
                 free(moves);
                 free(locations);
@@ -460,7 +480,7 @@ void decideDraculaMove(DraculaView dv)
             }
             
         }
-       
+        // go to a land location where there are more roads to escape
         for (int i = 0; i < numReturnedLocs; i++) {     
             if(placeIdToType(locations[i]) == LAND) {
                 if (locations[i] != BERLIN && locations[i] != PRAGUE && 
@@ -476,7 +496,7 @@ void decideDraculaMove(DraculaView dv)
             }
             
         }
-        
+        // if above options are not available, chose the first location to go to
         registerBestPlay(placeIdToAbbrev(locations[0]), 
             "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
         free(moves);
