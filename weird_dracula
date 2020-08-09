@@ -231,7 +231,7 @@ void decideDraculaMove(DraculaView dv)
                     count += 1;
                 }
             }                                                          
-            if (klausenberg == true && castle == true && safe_return == true) {
+            if (klausenberg == true && castle == true && safeReturn == true) {
                 registerBestPlay("KL", 
                     "ORA ORA ORA ORA ORA ORA ORA!");
                 return;
@@ -250,7 +250,7 @@ void decideDraculaMove(DraculaView dv)
             registerBestPlay("CD", "what's your name?");
             return;
         }
-        IF AT CN, GO TO BC
+        //IF AT CN, GO TO BC
         if (current_place == CONSTANTA) {
             for (int i=0; locations[i] != NOWHERE
                 && i < NUM_REAL_PLACES; i++) {
@@ -259,7 +259,7 @@ void decideDraculaMove(DraculaView dv)
                     return;
                 }
             }
-            if (castle = true) {
+            if (castle == true) {
                 registerBestPlay("CD", "HAHAHA!");
                 return;
             }
