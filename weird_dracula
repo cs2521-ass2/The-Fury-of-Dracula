@@ -98,6 +98,14 @@ void decideDraculaMove(DraculaView dv)
                     break;
                 }
             }
+            if (current_place == CASTLE_DRACULA && dangerous = false) {
+                 for (int j = 0; j < numReturnedMoves;) {
+                     if (moves[j] == DOUBLE_BACK_2) {
+                        registerBestPlay("D2", "YEE!");
+                        return;
+                     }
+                 }
+            }                   
             for (int j = 0; j < numReturnedMoves;) {
                 if (moves[j] == DOUBLE_BACK_1 && dangerous) {
                     j++;
@@ -173,41 +181,28 @@ void decideDraculaMove(DraculaView dv)
                 }
             }
         } 
-        
-        // If curr_loc is KL/GA, and there are 3 or more hunters 
+       ////////////////////////////////////////////////////////////////////// 
+        // If curr_loc is GA, and CN and BC cannot go to, and there are 3 or more hunters 
         // 6 moves away from CD, can begin health harvesting.
-        if (current_place == KLAUSENBURG && 
-            DvGetHealth(dv, PLAYER_DRACULA) >= 10) { //change to HP >= 20?
-            bool galatz = false;
-            bool castle = false;
-            for (int i=0; locations[i] != NOWHERE && i < NUM_REAL_PLACES; i++){
-                if (locations[i] == GALATZ) {
-                    galatz = true;
-                }
-                if (locations[i] == CASTLE_DRACULA) {
-                    castle = true;
-                }
-            }
-            // check if there are at least 3 hunters outside safe_entrap:
+         // check if there are at least 3 hunters outside safe_entrap:
             // get current location of hunters
-            PlaceId G_loc = DvGetPlayerLocation(dv, PLAYER_LORD_GODALMING);
-            PlaceId S_loc = DvGetPlayerLocation(dv, PLAYER_DR_SEWARD);
-            PlaceId H_loc = DvGetPlayerLocation(dv, PLAYER_VAN_HELSING);
-            PlaceId M_loc = DvGetPlayerLocation(dv, PLAYER_MINA_HARKER);
-            // count to store # of players within 6 moves reach of CD
-            int count = 0;
-            for (int i=0; i<20; i++) {
-                if (G_loc == safe_entrap[i] || S_loc == safe_entrap[i]
-                    || H_loc == safe_entrap[i] || M_loc == safe_entrap[i]) {
-                    count += 1;
-                }
-            }                                                          
-            if (galatz == true && castle == true && count <= 1) {
-                registerBestPlay("GA", 
-                    "ORA ORA ORA ORA ORA ORA ORA!");
-                return;
-            } 
-        }                                                
+        bool safeReturn = false;
+        PlaceId G_loc = DvGetPlayerLocation(dv, PLAYER_LORD_GODALMING);
+        PlaceId S_loc = DvGetPlayerLocation(dv, PLAYER_DR_SEWARD);
+        PlaceId H_loc = DvGetPlayerLocation(dv, PLAYER_VAN_HELSING);
+        PlaceId M_loc = DvGetPlayerLocation(dv, PLAYER_MINA_HARKER);
+        // count to store # of players within 6 moves reach of CD
+        int count = 0;
+        for (int i=0; i<20; i++) {
+            if (G_loc == safe_entrap[i] || S_loc == safe_entrap[i]
+                || H_loc == safe_entrap[i] || M_loc == safe_entrap[i]) {
+                count += 1;
+            }
+        }
+        if (count <= 1) {
+            safeReturn = true;
+        }
+                                                       
         if (current_place == GALATZ && 
             DvGetHealth(dv, PLAYER_DRACULA) >= 10) {
             bool klausenberg = false;
@@ -236,21 +231,43 @@ void decideDraculaMove(DraculaView dv)
                     count += 1;
                 }
             }                                                          
-            if (klausenberg == true && castle == true && count <= 1) {
+            if (klausenberg == true && castle == true && safe_return == true) {
                 registerBestPlay("KL", 
                     "ORA ORA ORA ORA ORA ORA ORA!");
                 return;
             } 
         }       
-        
-        if (current_place == GALATZ || current_place == KLAUSENBURG) {
-            bool castle = false;
+        ///////////////////////////////////////////////////////////////////////
+        bool castle = false;
             for (int i=0; locations[i] != NOWHERE && i 
                < NUM_REAL_PLACES; i++) {
                if (locations[i] == CASTLE_DRACULA) {
                    castle = true;
                }
-           }
+          }
+         
+        if (castle = true && safeReturn == true) {
+            registerBestPlay("CD", "what's your name?");
+            return;
+        }
+        IF AT CN, GO TO BC
+        if (current_place == CONSTANTA) {
+            for (int i=0; locations[i] != NOWHERE
+                && i < NUM_REAL_PLACES; i++) {
+                if (locations[i] == BUCHAREST) {
+                    registerBestPlay("BC", "MUDA MUDA!");
+                    return;
+                }
+            }
+            if (castle = true) {
+                registerBestPlay("CD", "HAHAHA!");
+                return;
+            }
+            registerBestPlay(placeIdToAbbrev(moves[random() % 
+                    numReturnedMoves]),"did u eat breakfast yet?");
+            return;
+        }
+        if (current_place == GALATZ || current_place == KLAUSENBURG) {            
            if (castle == true) {
                bool danger_castle = false;
                for (int i=0; dangerousPlaces[i] != NOWHERE && 
