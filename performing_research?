@@ -1,0 +1,51 @@
+//if hunters are one move next to each other, likely performed research
+        // go to sea or port city
+        
+        int researching_count = 0;
+        int retLocs;
+         PlaceId *playM = DvWhereCanTheyGo(dv, PLAYER_MINA_HARKER, 
+        &retLocs);
+        PlaceId currentG = DvGetPlayerLocation(dv, PLAYER_LORD_GODALMING);
+         PlaceId currentH = DvGetPlayerLocation(dv, PLAYER_VAN_HELSING);
+         PlaceId currentS = DvGetPlayerLocation(dv, PLAYER_DR_SEWARD);
+        for (int j=0;playM[j] != NOWHERE && j<NUM_REAL_PLACES;j++) {
+            if (playM[j] == currentG || playM[j] == currentH ||
+                playM[j] == currentS) {
+                researching_count += 1;
+            }
+        }
+        if (researching_count >= 2) {
+            for (int i=0; locations[i] != NOWHERE && i < NUM_REAL_PLACES; i++) {
+                if (placeIdToType(locations[i]) == SEA && 
+                    DvGetHealth(dv, PLAYER_DRACULA) >= 8) {
+                        registerBestPlay(placeIdToAbbrev(locations[i]), "HAHHA");
+                    return;
+                }
+            }
+            // try to move to port city
+            for (int i = 0; i < numReturnedLocs; i++) {
+                for (int j = 0; j < 29; j++) {
+                    if(locations[i] == port_city[j]) {
+                        registerBestPlay(placeIdToAbbrev(locations[i]), 
+                            "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+                        free(dangerousPlaces);
+                        free(moves);
+                        free(locations);
+                        return;
+                    }
+                }
+            }
+            if (numReturnedMoves != 0 && placeIdToType(current_place) == SEA 
+                && DvGetHealth(dv, PLAYER_DRACULA) >= 8 ) {
+                for (int x=0; x<numReturnedMoves; x++){
+                    if (moves[x] == HIDE) {
+                        registerBestPlay("HI", "Bye bye");
+                        return;
+                    }
+                    if (moves[x] == DOUBLE_BACK_1) {
+                        registerBestPlay("D1", "Bye bye");
+                        return;
+                    }
+                } 
+            }
+        }
