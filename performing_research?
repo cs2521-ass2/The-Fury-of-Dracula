@@ -1,7 +1,4 @@
-//if hunters are one move next to each other, likely performed research
-        // go to sea or port city
-        
-        int researching_count = 0;
+ int researching_count = 0;
         int retLocs;
          PlaceId *playM = DvWhereCanTheyGo(dv, PLAYER_MINA_HARKER, 
         &retLocs);
@@ -17,17 +14,34 @@
         if (researching_count >= 1) {
             for (int i=0; locations[i] != NOWHERE && i < NUM_REAL_PLACES; i++) {
                 if (placeIdToType(locations[i]) == SEA && 
-                    DvGetHealth(dv, PLAYER_DRACULA) >= 8) {
+                    DvGetHealth(dv, PLAYER_DRACULA) >= 18) {
                         registerBestPlay(placeIdToAbbrev(locations[i]), "HAHHA");
                     return;
                 }
             }
+            if (current_round % 6 == 0) {
+                if (placeIdToType(locations[i]) == SEA) {
+                    // try to move to port city
+                for (int i = 0; i < numReturnedLocs; i++) {
+                    for (int j = 0; j < 29; j++) {
+                        if(locations[i] == port_city[j]) {
+                            registerBestPlay(placeIdToAbbrev(locations[i]), 
+                                "HEHEHEHEHEHEHE!\nWRYYYYYYYY!");
+                            free(dangerousPlaces);
+                            free(moves);
+                            free(locations);
+                            return;
+                        }
+                    }
+                }
+            }
+        }   
             // try to move to port city
             for (int i = 0; i < numReturnedLocs; i++) {
                 for (int j = 0; j < 29; j++) {
                     if(locations[i] == port_city[j]) {
                         registerBestPlay(placeIdToAbbrev(locations[i]), 
-                            "MUDA MUDA MUDA MUDA MUDA!\nWRYYYYYYYY!");
+                            "HEHEHEHEHEHEHE!\nWRYYYYYYYY!");
                         free(dangerousPlaces);
                         free(moves);
                         free(locations);
@@ -36,7 +50,7 @@
                 }
             }
             if (numReturnedMoves != 0 && placeIdToType(current_place) == SEA 
-                && DvGetHealth(dv, PLAYER_DRACULA) >= 8 ) {
+                && DvGetHealth(dv, PLAYER_DRACULA) >= 16 ) {
                 for (int x=0; x<numReturnedMoves; x++){
                     if (moves[x] == HIDE) {
                         registerBestPlay("HI", "Bye bye");
